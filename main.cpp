@@ -13,6 +13,7 @@
 #include <musicbrainz5/NameCredit.h>
 #include <musicbrainz5/NameCreditList.h>
 #include <string>
+#include <filesystem>
 
 using namespace MusicBrainz5;
 
@@ -32,7 +33,10 @@ int main(int argc, char *argv[]){
  
     bool debug = false;
     bool single_mode = false;
+    std::string albumName = std::string(argv[2]);
+    std::string artistName = std::string(argv[1]);
 
+    // parse arguments
     for(int i = 1; i < argc; i++){
         if(std::string(argv[i]) == "-d"){
             std::cout << "DEBUG ENABLED" << std::endl;
@@ -43,11 +47,12 @@ int main(int argc, char *argv[]){
     }
 
     if(single_mode){
-        downloadSong(argv[3], debug);
+        downloadSong(argv[3], artistName, albumName, debug);
     }else {
-        downloadPlaylist(argv[3], debug);
+        downloadPlaylist(argv[3], artistName, albumName, debug);
     }
 
+    //End
     std::cout << "Download Completed!" << std::endl;
 
     return 0;
