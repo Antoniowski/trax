@@ -2,7 +2,7 @@
 #define YT_DLP_H
 #include <string>
 
-int download_playlist(std::string, bool);
-int download_song(std::string, bool);
+int downloadPlaylist(std::string, bool);
+int downloadSong(std::string, bool);
 
 #endif
