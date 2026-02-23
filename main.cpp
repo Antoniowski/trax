@@ -1,4 +1,5 @@
-#include <exception>
+#include <cstring>
+#include "menu.hpp"
 #include <iostream>
 #include <filesystem>
 #include "TagEditor.hpp"
@@ -14,31 +15,29 @@
 
 using namespace MusicBrainz5;
 
-int main(){
-    CQuery q("trax");
-    try{
-        CQuery::tParamMap params;
-        params["query"] = "release:\"Nightmare\" AND artist:\"Avenged Sevenfold\"";
-        CMetadata meta = q.Query("release", "", "", params);
-        auto* list = meta.ReleaseList();
-        if(!list || list->Count() == 0)
-        {
-            std::cout << "Error" << std::endl;
-            return -1;
-        }
+int main(int argc, char *argv[]){
 
-        for(int i = 0; i <list->Count(); i++)
-        {
-            auto* record = list->Item(i);
-            std::cout << record->Title() << std::endl;
-            std::cout << record->Date() << std::endl;
-            std::cout << record->ArtistCredit()->NameCreditList()->Item(0)->Artist()->Name() << std::endl;
-        }
-
-    }catch(std::exception e){
-        std::cout << "Exception " << std::endl;
+    if (argc == 2 && (strcmp(argv[1], "-h") || strcmp(argv[1], "--help"))) {
+        printMenu();
         return 0;
     }
 
+    if(argc < 4)
+    {
+        std::cout << "[ERROR] Expected at least 3 arguments: trax [ARTIST] [ALBUM] [URL]" << std::endl;
+        std::cout << "For more information use trax -h or trax --help" << std::endl;
+        return 1;
+    }
+ 
+    bool debug = false;
+    bool singe_mode = false;
+
+    for(int i = 1; i < argc; i++){
+        if(strcmp(argv[i], "-d")){
+            debug = true;
+        }else if(strcmp(argv[i], "-s")) {
+            singe_mode = true;
+        }
+    }
     return 0;
 }

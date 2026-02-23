@@ -9,6 +9,7 @@ add_executable(trax
     main.cpp 
     src/TagEditor.cpp 
     src/yt-dlp.cpp
+    src/menu.cpp
 )
 
 target_include_directories(trax PRIVATE 
