@@ -1,6 +1,8 @@
 #ifndef METADATA_SEARCHER_H
 #define METADATA_SEARCHER_H
 
+#include "TagEditor.hpp"
+#include <array>
 #include <musicbrainz5/Metadata.h>
 #include <musicbrainz5/Query.h>
 #include <musicbrainz5/Release.h>
@@ -9,28 +11,36 @@
 #include <musicbrainz5/Artist.h>
 #include <musicbrainz5/NameCredit.h>
 #include <musicbrainz5/NameCreditList.h>
+#include <string>
+#include <vector>
 
 
 using namespace MusicBrainz5;
+
+// query keys
+// recording:song title
+// artist:artist name
+// release:album name
+// date:release year
+// dur:duration in ms
 
 class MetadataSearcher{
     public:
         MetadataSearcher();
         ~MetadataSearcher();
-        void searchAlbum();
-        void searchSong();
-        void searchArtist();
+        std::vector<TagEditor::MP3Tag>* searchAlbum(std::string album, std::string artist, int year = 0);
+        TagEditor::MP3Tag* searchSong(std::string songName, std::string album, std::string artist, int year = 0);
 
     private:
         CQuery::tParamMap params;
+        CQuery::tParamMap lookupParams;
 
-        void setParams();
+        void setParams(std::string album, std::string artist, int year);
+        void setParams(std::string songName, std::string album, std::string artist, int year);
+        void setLookupParams();
         void resetParams();
 };
 #endif
-
-
-
 /*
 
     CQuery q("trax");

@@ -10,6 +10,7 @@ add_executable(trax
     src/TagEditor.cpp 
     src/yt-dlp.cpp
     src/menu.cpp
+    src/MetadataSearcher.cpp
 )
 
 target_include_directories(trax PRIVATE 
