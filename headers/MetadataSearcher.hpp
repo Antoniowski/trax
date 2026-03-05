@@ -1,7 +1,6 @@
 #ifndef METADATA_SEARCHER_H
 #define METADATA_SEARCHER_H
 
-#include "TagEditor.hpp"
 #include <array>
 #include <musicbrainz5/Metadata.h>
 #include <musicbrainz5/Query.h>
@@ -26,10 +25,19 @@ using namespace MusicBrainz5;
 
 class MetadataSearcher{
     public:
+        struct MP3Tag
+        {
+            std::string Artist;
+            std::string Title;
+            std::string Album;
+            std::string Year;
+            std::string Comment;
+        };  
+        
         MetadataSearcher();
         ~MetadataSearcher();
-        std::vector<TagEditor::MP3Tag>* searchAlbum(std::string album, std::string artist, int year = 0);
-        TagEditor::MP3Tag* searchSong(std::string songName, std::string album, std::string artist, int year = 0);
+        std::vector<MP3Tag>* searchAlbum(std::string album, std::string artist, int year = 0);
+        MP3Tag* searchSong(std::string songName, std::string album, std::string artist, int year = 0);
 
     private:
         CQuery::tParamMap params;
@@ -39,6 +47,7 @@ class MetadataSearcher{
         void setParams(std::string songName, std::string album, std::string artist, int year);
         void setLookupParams();
         void resetParams();
+        std::string readArtists(CArtistCredit* ac);
 };
 #endif
 /*

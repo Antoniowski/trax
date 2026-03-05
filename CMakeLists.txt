@@ -7,7 +7,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(trax 
     main.cpp 
-    src/TagEditor.cpp 
     src/yt-dlp.cpp
     src/menu.cpp
     src/MetadataSearcher.cpp
@@ -21,5 +20,6 @@ target_include_directories(trax PRIVATE
 
 target_link_libraries(trax PRIVATE
     musicbrainz5
+    tag
 )
 
