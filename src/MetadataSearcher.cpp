@@ -1,6 +1,8 @@
 #include "MetadataSearcher.hpp"
 #include <cstddef>
 #include <exception>
+#include "coverart/CoverArt.h"
+#include <fstream>
 #include <iostream>
 #include <musicbrainz5/MediumList.h>
 #include <musicbrainz5/Medium.h>
@@ -57,6 +59,7 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
         if(!singleTrack) continue;
 
         MP3Tag track;
+        track.AlbumID = firstAlbumId;
         track.Title = singleTrack->Recording()->Title();
         if (track.Title.empty()) singleTrack->Title();
         cout << track.Title << endl;
@@ -172,3 +175,19 @@ string MetadataSearcher::readArtists(CArtistCredit* ac){
     }
     return result;
 };
+
+void MetadataSearcher::downloadCoverArt(string albumID)
+{
+    //save cover art
+    CoverArtArchive::CCoverArt coverArt("trax");
+    vector<unsigned char> images = coverArt.FetchFront(albumID);
+    if(images.size())
+    {
+        stringstream filename;
+        filename << albumID << "-front.jpg";
+        cout << "Saving front to '" << filename.str() << "'" << endl;
+        ofstream front(filename.str().c_str());
+        front.write((const char*)&images[0], images.size());
+        front.close();
+    }
+}

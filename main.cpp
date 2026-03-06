@@ -5,14 +5,17 @@
 #include "menu.hpp"
 #include <exception>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include "yt-dlp.hpp"
 #include <ostream>
 #include <string>
 #include <vector>
-#include <format>
 #include "taglib/tag.h"
 #include "taglib/fileref.h"
+#include "taglib/id3v2tag.h"
+#include "taglib/attachedpictureframe.h"
+#include "taglib/mpegfile.h"
 
 int main(int argc, char *argv[]){
 
@@ -67,6 +70,9 @@ int main(int argc, char *argv[]){
         std::cout << "Files downloaded but metadatas weren't updated" << std::endl;
         return 1;
     }
+
+    // downlaod cover art
+    searcher->downloadCoverArt(result->at(0).AlbumID);
 
     //Edit tags phase
     std::vector<std::string> songNames;
@@ -141,6 +147,26 @@ int main(int argc, char *argv[]){
             file.tag()->setYear(0);
         }
         file.save();
+        
+        // edit image
+        std::ifstream imageFile(std::string("./" + tag.AlbumID + "-front.jpg"), std::ios::binary);
+        std::vector<char> imageData{std::istreambuf_iterator<char>(imageFile), std::istreambuf_iterator<char>{}};
+        TagLib::MPEG::File mp3File((fullPath+songNames[i]).c_str());
+        TagLib::ID3v2::Tag* tagV2 = mp3File.ID3v2Tag(true);
+        tagV2->removeFrames("APIC");
+
+        // Create the picture frame
+        auto* frame = new TagLib::ID3v2::AttachedPictureFrame();
+        frame->setMimeType("image/jpeg");  // or "image/png"
+        frame->setType(TagLib::ID3v2::AttachedPictureFrame::FrontCover);
+        frame->setDescription("Front Cover");
+        frame->setPicture(TagLib::ByteVector(imageData.data(), imageData.size()));
+
+        // Attach and save
+        tagV2->addFrame(frame);
+        mp3File.save();
+
+        // rename file
         std::rename((fullPath + songNames[i]).c_str(), (fullPath + tag.Title + ".mp3").c_str());
     }
 

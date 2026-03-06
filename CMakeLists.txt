@@ -18,8 +18,11 @@ target_include_directories(trax PRIVATE
     ${MUSICBRAINZ_INCLUDE_DIRS}
 )
 
+target_link_directories(trax PRIVATE /usr/local/lib)
+
 target_link_libraries(trax PRIVATE
     musicbrainz5
     tag
+    coverartcc
 )
 
