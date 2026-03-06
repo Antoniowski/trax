@@ -69,18 +69,6 @@ int main(int argc, char *argv[]){
     }
 
     //Edit tags phase
-    // TagLib::FileRef file("/home/antoniowski/Scaricati/Ozzy Osbourne - No More Tears (Official Audio) [mX_8p7NaibQ].mp3");
-    // file.tag()->setTitle(result->Title);
-    // file.tag()->setAlbum(result->Album);
-    // file.tag()->setArtist(artistName);
-    // file.tag()->setTrack(std::stoi((result->TrackNumber)));
-    // try {
-    //     file.tag()->setYear(std::stoi((result->Year).substr(0, 4)));
-    // } catch (std::exception e) {
-    //     file.tag()->setYear(0);condition
-    // }
-    // file.save();
-
     std::vector<std::string> songNames;
     std::string fullPath = "/home/antoniowski/Scaricati/test/";
     for(auto &entry : std::filesystem::directory_iterator(fullPath))
@@ -94,15 +82,31 @@ int main(int argc, char *argv[]){
     for(int i = 0; i < songNames.size(); i++)
     {
         TagLib::FileRef file(std::string(fullPath + songNames[i]).c_str());
+        if(file.isNull())
+            continue;
         MetadataSearcher::MP3Tag tag;
         bool songFound = false;
         for(auto t : *result)
         {
             std::string fileNameStr = songNames[i];
             std::string songNameStr = t.Title;
-            //lowercase
+
+            //lowercase + trim + normalize
             std::transform(fileNameStr.begin(), fileNameStr.end(), fileNameStr.begin(), ::tolower);
+            fileNameStr.erase(remove_if(fileNameStr.begin(), fileNameStr.end(), [](char c) {
+                return !isalnum(c) && c != ' ';
+                }), fileNameStr.end());
+            fileNameStr.erase(0, fileNameStr.find_first_not_of(" \t\r\n"));
+            fileNameStr.erase(fileNameStr.find_last_not_of(" \t\r\n") + 1);
+            
+            //lowercase + trim + normalize
             std::transform(songNameStr.begin(), songNameStr.end(), songNameStr.begin(), ::tolower);
+            songNameStr.erase(remove_if(songNameStr.begin(), songNameStr.end(), [](char c) {
+                return !isalnum(c) && c != ' ';
+                }), songNameStr.end());
+            songNameStr.erase(0, songNameStr.find_first_not_of(" \t\r\n"));
+            songNameStr.erase(songNameStr.find_last_not_of(" \t\r\n") + 1);
+
             if(fileNameStr.find(songNameStr) != std::string::npos)
             {
                 // found!
@@ -123,19 +127,20 @@ int main(int argc, char *argv[]){
         try 
         {
             file.tag()->setTrack(std::stoi(tag.TrackNumber));
-        } catch (std::exception e) 
+        }
+        catch (std::exception e) 
         {
             file.tag()->setTrack(i);
         }
         try 
         {
             file.tag()->setYear(std::stoi((tag.Year).substr(0, 4)));
-        } catch (std::exception e) 
+        } 
+        catch (std::exception e) 
         {
             file.tag()->setYear(0);
         }
         file.save();
-
         std::rename((fullPath + songNames[i]).c_str(), (fullPath + tag.Title + ".mp3").c_str());
     }
 
