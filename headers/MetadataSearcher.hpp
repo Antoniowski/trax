@@ -32,6 +32,7 @@ class MetadataSearcher{
             std::string Album;
             std::string Year;
             std::string Comment;
+            std::string TrackNumber;
         };  
         
         MetadataSearcher();

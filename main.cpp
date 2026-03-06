@@ -75,6 +75,7 @@ int main(int argc, char *argv[]){
     file.tag()->setTitle(result->Title);
     file.tag()->setAlbum(result->Album);
     file.tag()->setArtist(artistName);
+    file.tag()->setTrack(std::stoi((result->TrackNumber)));
     try {
         file.tag()->setYear(std::stoi((result->Year).substr(0, 4)));
     } catch (std::exception e) {
