@@ -34,7 +34,6 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
     {
         cout << "No albums found that parameters" << endl;
         delete result;
-        delete albumList;
         return NULL;
     }
 
@@ -46,33 +45,30 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
     {
             cout << "No medium found" << endl;
             delete result;
-            delete albumList;
-            delete firstAlbum;
             return NULL;
     }
     CMedium* medium = firstAlbum->MediumList()->Item(0);
     CTrackList* tracks = medium->TrackList();
     CTrack* singleTrack = NULL;
-
-    for(int i = 0; i < tracks->Count();i++)        
+    int count = tracks->Count();
+    for(int i = 0; i < count; i++)        
     {
         singleTrack = tracks->Item(i);
         if(!singleTrack) continue;
 
         MP3Tag track;
         track.Title = singleTrack->Recording()->Title();
+        if (track.Title.empty()) singleTrack->Title();
+        cout << track.Title << endl;
         track.Album = firstAlbum->Title();
         track.Year = firstAlbum->Date();
-        track.Artist = "";
-        for(int j = 0; j < singleTrack->ArtistCredit()->NameCreditList()->Count(); j++)
-        {
-            track.Artist += singleTrack->ArtistCredit()->NameCreditList()->Item(j)->Artist()->Name();
-            if(j != singleTrack->ArtistCredit()->NameCreditList()->Count() - 1)
-                track.Album += ", ";
-        }
+        track.TrackNumber = singleTrack->Number();
+        track.Artist = readArtists(singleTrack->Recording()->ArtistCredit());
+        if(track.Artist.empty()) track.Artist = readArtists(singleTrack->ArtistCredit());
+        if(track.Artist.empty()) track.Artist = readArtists(firstAlbum->ArtistCredit());
         result->push_back(track);
-        delete singleTrack;
     }
+    resetParams();
     return result;
 }
 
@@ -91,7 +87,6 @@ MetadataSearcher::MP3Tag* MetadataSearcher::searchSong(string songName, string a
     {
         cout << "No albums found that parameters" << endl;
         delete result;
-        delete albumList;
         return NULL;
     }
 
@@ -103,8 +98,6 @@ MetadataSearcher::MP3Tag* MetadataSearcher::searchSong(string songName, string a
     {
             cout << "No medium found" << endl;
             delete result;
-            delete albumList;
-            delete firstAlbum;
             return NULL;
     }
     CMedium* medium = firstAlbum->MediumList()->Item(0);
@@ -129,10 +122,7 @@ MetadataSearcher::MP3Tag* MetadataSearcher::searchSong(string songName, string a
         return result;
     }
     delete result;
-    delete albumList;
-    delete firstAlbum;
-    delete medium;
-    delete tracks;
+    resetParams();
     return NULL;
 }
 
