@@ -7,9 +7,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(trax 
     main.cpp 
-    src/yt-dlp.cpp
+    src/yt_dlp.cpp
     src/menu.cpp
     src/MetadataSearcher.cpp
+    src/utils.cpp
+    src/tag_editor.cpp
 )
 
 target_include_directories(trax PRIVATE 

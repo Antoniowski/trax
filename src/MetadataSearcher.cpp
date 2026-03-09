@@ -1,6 +1,5 @@
 #include "MetadataSearcher.hpp"
 #include <cstddef>
-#include <exception>
 #include "coverart/CoverArt.h"
 #include <fstream>
 #include <iostream>
@@ -29,7 +28,6 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
     setParams(album, artist, year);
     setLookupParams();
     vector<MetadataSearcher::MP3Tag>* result = new vector<MetadataSearcher::MP3Tag>();
-
     CMetadata metadata = query.Query("release", "", "", params);    
     CReleaseList* albumList = metadata.ReleaseList();
     if(!albumList || albumList->Count() == 0)
@@ -62,7 +60,6 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
         track.AlbumID = firstAlbumId;
         track.Title = singleTrack->Recording()->Title();
         if (track.Title.empty()) singleTrack->Title();
-        cout << track.Title << endl;
         track.Album = firstAlbum->Title();
         track.Year = firstAlbum->Date();
         track.TrackNumber = singleTrack->Number();
@@ -185,7 +182,6 @@ void MetadataSearcher::downloadCoverArt(string albumID)
     {
         stringstream filename;
         filename << albumID << "-front.jpg";
-        cout << "Saving front to '" << filename.str() << "'" << endl;
         ofstream front(filename.str().c_str());
         front.write((const char*)&images[0], images.size());
         front.close();
