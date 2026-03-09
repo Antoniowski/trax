@@ -9,12 +9,13 @@
 #include <string>
 #include <vector>
 #include "utils.hpp"
-#include "tag_editor.hpp"
+#include "tageditor.hpp"
 
 using namespace std;
 
-int main(int argc, char *argv[]){
-
+int main(int argc, char *argv[])
+{
+    // Initial checks
     if (argc == 2 && (strcmp(argv[1], "-h") || strcmp(argv[1], "--help")))
     {
         printMenu();
@@ -27,13 +28,13 @@ int main(int argc, char *argv[]){
         cout << "For more information use trax -h or trax --help" << endl;
         return 1;
     }
- 
+    
     bool debug = false;
     bool single_mode = false;
+    bool no_metadata_mode = false;
     bool downloaded = false;
     string albumName = string(argv[1]);
     string artistName = string(argv[2]);
-    
     vector<string> songNames;
     string fullPath = "./" + albumName + " - " + artistName + "/";
 
@@ -49,6 +50,10 @@ int main(int argc, char *argv[]){
         {
             single_mode = true;
         }
+        else if(string(argv[i]) == "-n" || string(argv[i]) == "--no-meta")
+        {
+            no_metadata_mode = true;
+        }
     }
 
     //Download phase
@@ -57,26 +62,31 @@ int main(int argc, char *argv[]){
     else 
         downloadPlaylist(argv[3], artistName, albumName, debug);
 
-    //Retrieve album or song metadatas
-    MetadataSearcher* searcher = new MetadataSearcher();
-    vector<MetadataSearcher::MP3Tag>* result = searcher->searchAlbum(albumName, artistName);
+    downloaded = true;
     
-    //Exit from program if search failed
-    if(result == NULL)
+    if(!no_metadata_mode)
     {
-        cout << "Music downloaded but metadatas weren't updated" << endl;
-        return 1;
+        //Retrieve album or song metadatas
+        MetadataSearcher* searcher = new MetadataSearcher();
+        vector<MetadataSearcher::MP3Tag>* result = searcher->searchAlbum(albumName, artistName);
+        
+        //Exit from program if search failed
+        if(result == NULL)
+        {
+            cout << "Music downloaded but metadatas weren't updated" << endl;
+            return 1;
+        }
+
+        // Download cover art
+        searcher->downloadCoverArt(result->at(0).AlbumID);
+
+        //Edit tags phase
+        retrieveSongsNames(fullPath, &songNames);
+        editTags(songNames, fullPath, result, artistName);
+        
+        //Clean useless files
+        filesystem::remove("./"+result->at(0).AlbumID+"-front.jpg");
     }
-
-    // downlaod cover art
-    searcher->downloadCoverArt(result->at(0).AlbumID);
-
-    //Edit tags phase
-    retrieveSongsNames(fullPath, &songNames);
-    editTags(songNames, fullPath, result, artistName);
-    
-    //Clean useless files
-    filesystem::remove(fullPath+result->at(0).AlbumID+"-front.jpg");
 
     //End
     if(downloaded)

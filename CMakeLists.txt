@@ -11,7 +11,7 @@ add_executable(trax
     src/menu.cpp
     src/MetadataSearcher.cpp
     src/utils.cpp
-    src/tag_editor.cpp
+    src/tageditor.cpp
 )
 
 target_include_directories(trax PRIVATE 

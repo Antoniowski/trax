@@ -9,4 +9,5 @@ void printMenu(){
     std::cout << "\t-h, --help\toutput trax manual" << std::endl;
     std::cout << "\t-d\t\tenable debug mode to see the yt-dlp output stream " << std::endl;
     std::cout << "\t-s\t\tuse single song mode when the inserted url doesn't refer to a playlist" << std::endl;
+    std::cout << "\t-x, --no-meta\tavoid metadata download and application" << std::endl;
 }

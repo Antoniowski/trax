@@ -1,10 +1,13 @@
-#include "tag_editor.hpp"
+#include "tageditor.hpp"
+#include "MetadataSearcher.hpp"
 #include "taglib/tag.h"
 #include "taglib/fileref.h"
 #include "taglib/id3v2tag.h"
 #include "taglib/attachedpictureframe.h"
 #include "taglib/mpegfile.h"
 #include <fstream>
+#include <iostream>
+#include "utils.hpp"
 
 using namespace std;
 
@@ -13,36 +16,16 @@ void editTags(vector<string> songNames, string songsDirPath,  vector<MetadataSea
     for(int i = 0; i < songNames.size(); i++)
     {
         TagLib::MPEG::File file((songsDirPath+songNames[i]).c_str());
-        if(file.isValid())
+        if(!file.isValid())
             continue;
         MetadataSearcher::MP3Tag tag;
         bool songFound = false;
-        for(auto t : *metadatas)
+        for(MetadataSearcher::MP3Tag t : *metadatas)
         {
             string fileNameStr = songNames[i];
             string songNameStr = t.Title;
-
-            //lowercase + trim + normalize + remove spaces
-            transform(fileNameStr.begin(), fileNameStr.end(), fileNameStr.begin(), ::tolower);
-            fileNameStr.erase(remove_if(fileNameStr.begin(), fileNameStr.end(), [](char c) {
-                return !isalnum(c) && c != ' ';
-                }), fileNameStr.end());
-            fileNameStr.erase(0, fileNameStr.find_first_not_of(" \t\r\n"));
-            fileNameStr.erase(fileNameStr.find_last_not_of(" \t\r\n") + 1);
-            fileNameStr.erase(remove_if(fileNameStr.begin(), fileNameStr.end(), [](char c){
-                return isspace(c);
-            }), fileNameStr.end());
-            
-            //lowercase + trim + normalize + remove spaces
-            transform(songNameStr.begin(), songNameStr.end(), songNameStr.begin(), ::tolower);
-            songNameStr.erase(remove_if(songNameStr.begin(), songNameStr.end(), [](char c) {
-                return !isalnum(c) && c != ' ';
-                }), songNameStr.end());
-            songNameStr.erase(0, songNameStr.find_first_not_of(" \t\r\n"));
-            songNameStr.erase(songNameStr.find_last_not_of(" \t\r\n") + 1);
-            songNameStr.erase(remove_if(songNameStr.begin(), songNameStr.end(), [](char c){
-                return isspace(c);
-            }), songNameStr.end());
+            prepareStringForComparison(&fileNameStr);
+            prepareStringForComparison(&songNameStr);
 
             if(fileNameStr.find(songNameStr) != string::npos)
             {

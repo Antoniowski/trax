@@ -28,6 +28,7 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
     setParams(album, artist, year);
     setLookupParams();
     vector<MetadataSearcher::MP3Tag>* result = new vector<MetadataSearcher::MP3Tag>();
+    
     CMetadata metadata = query.Query("release", "", "", params);    
     CReleaseList* albumList = metadata.ReleaseList();
     if(!albumList || albumList->Count() == 0)
