@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     string albumName = string(argv[1]);
     string artistName = string(argv[2]);
     vector<string> songNames;
-    string fullPath = "./" + albumName + " - " + artistName + "/";
+    string fullPath = "./" + artistName + " - " + albumName + "/";
 
     //Parse arguments
     for(int i = 1; i < argc; i++)
@@ -58,9 +58,9 @@ int main(int argc, char *argv[])
 
     //Download phase
     if(single_mode)
-        downloadSong(argv[3], artistName, albumName, debug);
+        downloadSong(argv[3], albumName, artistName, debug);
     else 
-        downloadPlaylist(argv[3], artistName, albumName, debug);
+        downloadPlaylist(argv[3], albumName, artistName, debug);
 
     downloaded = true;
     

@@ -29,7 +29,7 @@ int downloadPlaylist(std::string url, std::string album, std::string artist, boo
         return WEXITSTATUS(result); 
     }else{
         spinners::Spinner* spinner = new spinners::Spinner();
-        spinner->setText("Downlading ...");
+        spinner->setText("Downloading ...");
         spinner->setInterval(100);
         spinner->setSymbols("dots4");
 
