@@ -18,7 +18,7 @@ A youtube audio downloader based on [yt-dlp](https://github.com/yt-dlp/yt-dlp) w
 - [libcoverart](https://musicbrainz.org/doc/libcoverart) (only for manual compilation)
 
 ## Installation
-For now the only ways to "install" Trax are compiling it using CMake or downloading an already compiled version from this GitHub page.
+To "install" Trax you can compiling it using CMake, downloading an already compiled version from this GitHub page or using the <code>install.sh</code> script (only Linux for now).
 ### CMake
 To install Trax using CMake just execute the following commands while in the program directory:
 
@@ -28,8 +28,17 @@ To install Trax using CMake just execute the following commands while in the pro
 >cmake .. <br/>
 >make <br/>
 
-
 Doing so all the CMake generated file will be created in the build folder.
+
+### Install.sh
+After cloning the repo, you can install Trax by using the following command: <br/>
+>
+> sudo ./install.sh
+>
+
+This will still compile the code using CMake and will add the program
+to the <code>/usr/local/bin</code> directory.
+
 ## How To Use
 The basic way to use Trax is to use the following syntax: <br/> <br/>
 <code>trax [ALBUM] [ARTIST] [URL]</code> <br/><br/>
