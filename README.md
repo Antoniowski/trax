@@ -66,6 +66,6 @@ The code also contains the C++ [spinner header](https://github.com/jkuri/spinner
 
 ## TODO List
 - Suppress unwanted warning coming from MusicBrainz library
-- Add installation script
+- ~~Add installation script~~ [DONE]
 - Add support for Windows
 - Add support for MacOs 
