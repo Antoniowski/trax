@@ -31,6 +31,8 @@ This let the user to download an entire playlist and each downloaded video will 
 If no info is retrieved from the MusicBrainz database, only the files download and the mp3 convertion will be performed. <br/><br/>
 The user can add flags to modify the program behaviour. Each flag should be added after the URL field, with exception for "-h" flag.
 
+<code>trax [ALBUM] [ARTIST] [URL] [OPTIONS]</code> <br/>
+
 ### Flags
 | Flag | Description |
 | ---- | ----------- |
