@@ -4,6 +4,9 @@
 </p>
 <br/>
 <br/>
+<p align="center">
+  <a href="https://ko-fi.com/P5P11VSMXF"><img src="https://ko-fi.com/img/githubbutton_sm.svg"/></a>
+</p>
 
 A youtube audio downloader based on [yt-dlp](https://github.com/yt-dlp/yt-dlp) with automated id tag compilation using data from [MusicBrainz](https://musicbrainz.org/) databases. <br/>
 
@@ -69,3 +72,4 @@ The code also contains the C++ [spinner header](https://github.com/jkuri/spinner
 - ~~Add installation script~~ [DONE]
 - Add support for Windows
 - Add support for MacOs 
+- Fix problem when Cover Art is not found

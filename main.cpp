@@ -2,6 +2,7 @@
 #include <cstring>
 #include "MetadataSearcher.hpp"
 #include "menu.hpp"
+#include <exception>
 #include <filesystem>
 #include <iostream>
 #include "yt_dlp.hpp"
@@ -78,7 +79,14 @@ int main(int argc, char *argv[])
         }
 
         // Download cover art
-        searcher->downloadCoverArt(result->at(0).AlbumID);
+        try 
+        {
+            searcher->downloadCoverArt(result->at(0).AlbumID);
+        } 
+        catch (exception e) 
+        {
+            cout << "Error in cover art download or cover art not found in database" << endl;
+        }
 
         //Edit tags phase
         retrieveSongsNames(fullPath, &songNames);
