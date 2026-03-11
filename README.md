@@ -39,8 +39,11 @@ After cloning the repo, you can install Trax by using the following command: <br
 > sudo ./install.sh
 >
 
-This will still compile the code using CMake and will add the program
+This will still compile the code using CMake but it will also add the program
 to the <code>/usr/local/bin</code> directory.
+
+### Use A Compiled Version
+This is the easiest way to "install" Trax. Just download one of the [releases](https://github.com/Antoniowski/trax/releases). If you want to use trax globally you can use the <code>simple_install.sh</code> provided with each release. The script will simply move the executable in the <code>/usr/local/bin</code> folder.
 
 ## How To Use
 The basic way to use Trax is to use the following syntax: <br/> <br/>
