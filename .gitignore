@@ -3,3 +3,4 @@
 build/
 
 compile_commands.json
+simple_install.sh
