@@ -80,7 +80,7 @@ void editTags(vector<string> songNames, string songsDirPath,  vector<MetadataSea
         }
         catch(exception e )
         {
-            cout << "Error during image download. Skipped." << endl;
+            cout << "[WARNING] Cover art attachment skipped." << endl;
         }
         
         file.save();

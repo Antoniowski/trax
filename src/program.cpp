@@ -2,36 +2,36 @@
 #include "yt_dlp.hpp"
 #include <cstring>
 #include <iostream>
+#include <string>
+#include <vector>
+#include "MetadataSearcher.hpp"
+#include "utils.hpp"
+#include "tageditor.hpp"
+#include <filesystem>
 
 bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
      // Initial checks
-    if (argc == 2 && (strcmp(argv[1], "-h") || strcmp(argv[1], "--help")))
-    {
+    if (argc == 2 && (strcmp(argv[1], "-h") || strcmp(argv[1], "--help"))){
         flag_struct->menu = true;        
         return true;
     }
 
-    if(argc < 4)
-    {
+    if(argc < 4){
         std::cout << "[ERROR] Expected at least 3 arguments: trax [ALBUM] [ARTIST] [URL]" << std::endl;
         std::cout << "For more information use trax -h or trax --help" << std::endl;
         return false;
     }
 
     //Parse arguments
-    for(int i = 1; i < argc; i++)
-    {
-        if(std::string(argv[i]) == "-d")
-        {
+    for(int i = 1; i < argc; i++){
+        if(std::string(argv[i]) == "-d"){
             std::cout << "DEBUG ENABLED" << std::endl;
             flag_struct->debug = true;
         }
-        else if(std::string(argv[i]) == "-s") 
-        {
+        else if(std::string(argv[i]) == "-s") {
             flag_struct->singleMode = true;
         }
-        else if(std::string(argv[i]) == "-n" || std::string(argv[i]) == "--no-meta")
-        {
+        else if(std::string(argv[i]) == "-n" || std::string(argv[i]) == "--no-meta"){
             flag_struct->noMetadataMode = true;
         }
     }
@@ -53,11 +53,55 @@ bool downloadAudio(data_t data, flags_t* flags){
     }
 
     if(res == -1){
+        std::cout << "[ERROR] There was a problem during audio download" << std::endl;
         return false;
     }else{
-        flags.downloaded = true;
+        flags->pAudioDownloaded = true;
         return true;
 
     }
 }
 
+bool searchMetadata(data_t data, flags_t* flags, std::vector<std::string>* titles, std::vector<MetadataSearcher::MP3Tag>** metadata){
+    //Retrieve album or song metadatas
+        MetadataSearcher* searcher = new MetadataSearcher();
+        *metadata = searcher->searchAlbum(data.albumName, data.artistName);
+        
+        //Exit from program if search failed
+        if(metadata == NULL){
+            std::cout << "[ERROR] Music downloaded but metadata weren't updated" << std::endl;
+            return false;
+        }
+
+        // Download cover art
+        try{
+            searcher->downloadCoverArt((*metadata)->at(0).AlbumID);
+        }
+        catch (std::exception e){
+            std::cout << "[WARNING] There was a problem while downloading the cover art or cover art was not found in database" << std::endl;
+        }
+        flags->pCoverDownloaded = true;
+
+        //Edit tags phase
+        retrieveSongsNames(data.fullPath, titles);
+        return true;
+}
+
+void editTagsAndCover(data_t data, flags_t* flags, std::vector<std::string> titles, std::vector<MetadataSearcher::MP3Tag> *metadata){
+    editTags(titles, data.fullPath, metadata, data.artistName);
+    flags->pTagEdited = true;
+}
+
+void removeTempFiles(std::vector<MetadataSearcher::MP3Tag>* metadata){
+    std::filesystem::remove("./"+metadata->at(0).AlbumID+"-front.jpg");
+}
+
+void endProgram(flags_t flags){
+    std::cout << "FINISHED!" << std::endl;
+    std::cout << "AUDIO DOWNLOAD: ";
+    std::cout << (flags.pAudioDownloaded ? "[OK]" : "[FAILED]") << std::endl;
+    std::cout << "COVER ART DOWNLOAD: ";
+    std::cout << (flags.pCoverDownloaded ? "[OK]" : "[FAILED]") << std::endl;
+    std::cout << "TAG EDIT: ";
+    std::cout << (flags.pTagEdited ? "[OK]" : "[FAILED]") << std::endl;
+}

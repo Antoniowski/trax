@@ -3,7 +3,7 @@
 
 void printMenu(){
     std::cout << "Trax Manual" << std::endl;
-    std::cout << "trax: trax [ALBUM] [ARTIST] [URL]" << std::endl;
+    std::cout << "trax: trax [ALBUM] [ARTIST] [URL] [OPTIONS]" << std::endl;
     std::cout << "\tmp3 downloader based on yt-dlp and MusicBrainz database" << std::endl;
     std::cout << std::endl << "Options:" << std::endl;
     std::cout << "\t-h, --help\toutput trax manual" << std::endl;
