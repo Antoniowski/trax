@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstring>
+#include "program.hpp"
 #include "MetadataSearcher.hpp"
 #include "menu.hpp"
 #include <exception>
@@ -16,52 +17,29 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    // Initial checks
-    if (argc == 2 && (strcmp(argv[1], "-h") || strcmp(argv[1], "--help")))
-    {
+    flags_t flags;
+    data_t data;
+
+    // Exit if there is an error during parsing
+    if(!parseArguments(argc, argv, &flags, &data)){
+        return 1;
+    }
+
+    if(flags.menu){
         printMenu();
         return 0;
     }
 
-    if(argc < 4)
-    {
-        cout << "[ERROR] Expected at least 3 arguments: trax [ALBUM] [ARTIST] [URL]" << endl;
-        cout << "For more information use trax -h or trax --help" << endl;
-        return 1;
-    }
-    
-    bool debug = false;
-    bool single_mode = false;
-    bool no_metadata_mode = false;
-    bool downloaded = false;
-    string albumName = string(argv[1]);
-    string artistName = string(argv[2]);
     vector<string> songNames;
-    string fullPath = "./" + artistName + " - " + albumName + "/";
 
-    //Parse arguments
-    for(int i = 1; i < argc; i++)
-    {
-        if(string(argv[i]) == "-d")
-        {
-            cout << "DEBUG ENABLED" << endl;
-            debug = true;
-        }
-        else if(string(argv[i]) == "-s") 
-        {
-            single_mode = true;
-        }
-        else if(string(argv[i]) == "-n" || string(argv[i]) == "--no-meta")
-        {
-            no_metadata_mode = true;
-        }
-    }
+
 
     //Download phase
     if(single_mode)
-        downloadSong(argv[3], albumName, artistName, debug);
+        //downloadSong(argv[3], albumName, artistName, debug);    //Not working for now
+        downloadPlaylist(url, albumName, artistName, debug);
     else 
-        downloadPlaylist(argv[3], albumName, artistName, debug);
+        downloadPlaylist(url, albumName, artistName, debug);
 
     downloaded = true;
     
