@@ -1,7 +1,6 @@
 #ifndef METADATA_SEARCHER_H
 #define METADATA_SEARCHER_H
 
-#include <array>
 #include <musicbrainz5/Metadata.h>
 #include <musicbrainz5/Query.h>
 #include <musicbrainz5/Release.h>

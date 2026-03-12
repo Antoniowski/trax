@@ -8,6 +8,7 @@
 #include "utils.hpp"
 #include "tageditor.hpp"
 #include <filesystem>
+#include "OutputSuppressor.hpp"
 
 bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
      // Initial checks
@@ -64,27 +65,34 @@ bool downloadAudio(data_t data, flags_t* flags){
 
 bool searchMetadata(data_t data, flags_t* flags, std::vector<std::string>* titles, std::vector<MetadataSearcher::MP3Tag>** metadata){
     //Retrieve album or song metadatas
-        MetadataSearcher* searcher = new MetadataSearcher();
+    MetadataSearcher* searcher = new MetadataSearcher();
+
+    {
+        OutputSuppressor suppress;
         *metadata = searcher->searchAlbum(data.albumName, data.artistName);
-        
-        //Exit from program if search failed
-        if(metadata == NULL){
-            std::cout << "[ERROR] Music downloaded but metadata weren't updated" << std::endl;
-            return false;
-        }
+    }
+    
+    //Exit from program if search failed
+    if(*metadata == NULL){
+        std::cout << "[ERROR] Music downloaded but metadata weren't updated" << std::endl;
+        delete searcher;
+        return false;
+    }
 
-        // Download cover art
-        try{
-            searcher->downloadCoverArt((*metadata)->at(0).AlbumID);
-        }
-        catch (std::exception e){
-            std::cout << "[WARNING] There was a problem while downloading the cover art or cover art was not found in database" << std::endl;
-        }
+    // Download cover art
+    try{
+        searcher->downloadCoverArt((*metadata)->at(0).AlbumID);
         flags->pCoverDownloaded = true;
+    }
+    catch (std::exception e){
+        std::cout << "[WARNING] There was a problem while downloading the cover art or cover art was not found in database" << std::endl;
+        flags->pCoverDownloaded = false;
+    }
 
-        //Edit tags phase
-        retrieveSongsNames(data.fullPath, titles);
-        return true;
+    //Edit tags phase
+    retrieveSongsNames(data.fullPath, titles);
+    delete searcher;
+    return true;
 }
 
 void editTagsAndCover(data_t data, flags_t* flags, std::vector<std::string> titles, std::vector<MetadataSearcher::MP3Tag> *metadata){

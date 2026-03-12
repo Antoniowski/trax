@@ -71,8 +71,8 @@ The code also contains the C++ [spinner header](https://github.com/jkuri/spinner
 - MacOs [TODO]
 
 ## TODO List
-- Suppress unwanted warning coming from MusicBrainz library
+- ~~Suppress unwanted warning coming from MusicBrainz library~~
 - ~~Add installation script~~ [DONE]
 - Add support for Windows
 - Add support for MacOs 
-- Fix problem when Cover Art is not found
+- ~~Fix problem when Cover Art is not found~~ [DONE]

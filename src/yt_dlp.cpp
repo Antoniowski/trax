@@ -14,7 +14,7 @@ int downloadPlaylist(std::string url, std::string album, std::string artist, boo
     
     FILE* pipe = popen(cmd.c_str(), "r");
     if(!pipe){
-        std::cout << "Error in opening pipe" << std::endl;
+        std::cout << "[ERROR] Error in opening pipe" << std::endl;
         return -1;
     }
 
