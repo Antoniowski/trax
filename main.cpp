@@ -31,17 +31,11 @@ int main(int argc, char *argv[])
     }
 
     vector<string> songNames;
-
-
-
     //Download phase
-    if(single_mode)
-        //downloadSong(argv[3], albumName, artistName, debug);    //Not working for now
-        downloadPlaylist(url, albumName, artistName, debug);
-    else 
-        downloadPlaylist(url, albumName, artistName, debug);
-
-    downloaded = true;
+    if(!downloadAudio(data, &flags)){
+        cout << "[ERROR] There was a problem during audio download" << endl;
+        return 1;
+    }
     
     if(!no_metadata_mode)
     {

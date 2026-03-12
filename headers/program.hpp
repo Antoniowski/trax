@@ -18,5 +18,6 @@ typedef struct args{
 } data_t;
 
 bool parseArguments(int argc, char **argv, flags_t* flag_struct, data_t* data);
+bool downloadAudio(data_t data, flags_t* flags);
 
 #endif

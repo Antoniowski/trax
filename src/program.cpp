@@ -1,4 +1,5 @@
 #include "program.hpp"
+#include "yt_dlp.hpp"
 #include <cstring>
 #include <iostream>
 
@@ -42,3 +43,21 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
 
     return true;
 }
+
+bool downloadAudio(data_t data, flags_t* flags){
+    int res = 0;
+    if(flags->singleMode){
+        res = downloadSong(data.url, flags->debug);
+    }else{
+        res = downloadPlaylist(data.url, data.albumName, data.artistName, flags->debug);
+    }
+
+    if(res == -1){
+        return false;
+    }else{
+        flags.downloaded = true;
+        return true;
+
+    }
+}
+

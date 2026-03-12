@@ -5,7 +5,7 @@
 #include <string>
 #include "spinner.hpp"
 
-int downloadPlaylist(std::string url, std::string album, std::string artist, bool debug = false){
+int downloadPlaylist(std::string url, std::string album, std::string artist, bool debug){
     std::string cmd = "yt-dlp -t mp3 --yes-playlist  -P \"./" + artist + " - " + album + "\" \"" + url + "\"";
     
     // if in not in debug mode i want to ignore the yt-dlp output stream
@@ -43,9 +43,9 @@ int downloadPlaylist(std::string url, std::string album, std::string artist, boo
 }
 
 
-int downloadSong(std::string url, std::string album, std::string artist, bool debug = false)
+int downloadSong(std::string url, bool debug)
 {
-    std::string cmd = "yt-dlp -t mp3 -P \"./" + artist + " - " + album + "\" \"" + url + "\"";
+    std::string cmd = "yt-dlp -t mp3 \"" + url + "\"";
 
     // if in not in debug mode i want to ignore the yt-dlp output stream
     if(!debug)
