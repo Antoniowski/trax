@@ -67,7 +67,9 @@ bool searchMetadata(data_t data, flags_t* flags, std::vector<std::string>* title
     //Retrieve album or song metadatas
     MetadataSearcher* searcher = new MetadataSearcher();
 
-    {
+    if(flags->debug){
+        *metadata = searcher->searchAlbum(data.albumName, data.artistName);
+    }else{
         OutputSuppressor suppress;
         *metadata = searcher->searchAlbum(data.albumName, data.artistName);
     }
