@@ -11,7 +11,7 @@
 
 using namespace std;
 
-void editTags(vector<string> songNames, string songsDirPath,  vector<MetadataSearcher::MP3Tag>* metadatas, string artistName)
+void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSearcher::MP3Tag>* metadatas, string artistName)
 {
     for(int i = 0; i < songNames.size(); i++)
     {

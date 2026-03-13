@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 
-// Utility RAII guard to suppress stdout and stderr
 struct OutputSuppressor {
     std::streambuf* oldCout;
     std::streambuf* oldCerr;
