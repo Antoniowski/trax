@@ -26,10 +26,10 @@ To "install" Trax you can compiling it using CMake, downloading an already compi
 To install Trax using CMake just execute the following commands while in the program directory:
 
 ```
-mkdir build <br/>
-cd build/<br/>
-cmake .. <br/>
-make <br/>
+mkdir build
+cd build/
+cmake ..
+make
 ```
 
 Doing so all the CMake generated file will be created in the build folder.
