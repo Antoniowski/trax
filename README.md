@@ -10,7 +10,7 @@
 
 A youtube audio downloader based on [yt-dlp](https://github.com/yt-dlp/yt-dlp) with automated id tag compilation using data from [MusicBrainz](https://musicbrainz.org/) databases. <br/>
 
->
+> 
 > #### DISCLAIMER
 > The program at the moment <b>SHOULD</b> work without problems but it is still far to be perfect. <br/>
 >
@@ -25,19 +25,22 @@ To "install" Trax you can compiling it using CMake, downloading an already compi
 ### CMake
 To install Trax using CMake just execute the following commands while in the program directory:
 
-
->mkdir build <br/>
->cd build/<br/>
->cmake .. <br/>
->make <br/>
+```
+mkdir build <br/>
+cd build/<br/>
+cmake .. <br/>
+make <br/>
+```
 
 Doing so all the CMake generated file will be created in the build folder.
 
 ### Install.sh
 After cloning the repo, you can install Trax by using the following command: <br/>
->
-> sudo ./install.sh
->
+
+```
+sudo ./install.sh
+```
+
 
 This will still compile the code using CMake but it will also add the program
 to the <code>/usr/local/bin</code> directory.
@@ -71,7 +74,7 @@ The code also contains the C++ [spinner header](https://github.com/jkuri/spinner
 - MacOs [TODO]
 
 ## TODO List
-- ~~Suppress unwanted warning coming from MusicBrainz library~~
+- ~~Suppress unwanted warning coming from MusicBrainz library~~ [DONE]
 - ~~Add installation script~~ [DONE]
 - Add support for Windows
 - Add support for MacOs 
