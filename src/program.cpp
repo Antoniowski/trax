@@ -50,6 +50,16 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
             }
         }else if(std::string(argv[i]) == "-m" || std::string(argv[i]) == "--only-meta"){
             flag_struct->onlyMetadataMode = true;
+        }else if(std::string(argv[i]) == "-y"){
+            try{
+                data->year = std::stoi(argv[i+1]);
+            }catch(const std::invalid_argument &e){
+                std::cout << "[ERROR] Use a valid value for the -y flag" << std::endl;
+                return false;
+            }catch(const std::out_of_range &e){
+                std::cout << "[ERROR] Value used for -y flag is out of range" << std::endl;
+                return false;
+            }
         }
     }
 
@@ -84,10 +94,10 @@ bool searchMetadata(data_t data, flags_t* flags, std::vector<std::string>* title
     MetadataSearcher* searcher = new MetadataSearcher();
 
     if(flags->debug){
-        *metadata = searcher->searchAlbum(data.albumName, data.artistName);
+        *metadata = searcher->searchAlbum(data.albumName, data.artistName, data.year, flags->iteration);
     }else{
         OutputSuppressor suppress;
-        *metadata = searcher->searchAlbum(data.albumName, data.artistName);
+        *metadata = searcher->searchAlbum(data.albumName, data.artistName, data.year, flags->iteration);
     }
     
     //Exit from program if search failed

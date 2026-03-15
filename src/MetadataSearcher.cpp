@@ -37,10 +37,11 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
         return NULL;
     }
     
-    string firstAlbumId = albumList->Item(0)->ID();
-    if(iteration != 0 && albumList->Count() >= iteration)
-    {
+    string firstAlbumId;
+    if(iteration != 0 && albumList->Count() - 1 >= iteration){
         firstAlbumId = albumList->Item(iteration)->ID();
+    }else{
+        firstAlbumId = albumList->Item(0)->ID();
     }
 
     CMetadata fullRelease = trackQuery.Query("release",firstAlbumId, "", lookupParams);
@@ -52,28 +53,34 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
             delete result;
             return NULL;
     }
-    CMedium* medium = firstAlbum->MediumList()->Item(0);
-    CTrackList* tracks = medium->TrackList();
-    CTrack* singleTrack = NULL;
-    int count = tracks->Count();
 
-    for(int i = 0; i < count; i++)        
-    {
-        singleTrack = tracks->Item(i);
-        if(!singleTrack) continue;
-
-        MP3Tag track;
-        track.AlbumID = firstAlbumId;
-        track.Title = singleTrack->Recording()->Title();
-        if (track.Title.empty()) singleTrack->Title();
-        track.Album = firstAlbum->Title();
-        track.Year = firstAlbum->Date();
-        track.TrackNumber = singleTrack->Number();
-        track.Artist = readArtists(singleTrack->Recording()->ArtistCredit());
-        if(track.Artist.empty()) track.Artist = readArtists(singleTrack->ArtistCredit());
-        if(track.Artist.empty()) track.Artist = readArtists(firstAlbum->ArtistCredit());
-        result->push_back(track);
+    int currentMedium = 0;
+    while (currentMedium < firstAlbum->MediumList()->Count()) {
+        CMedium* medium = firstAlbum->MediumList()->Item(currentMedium);
+        CTrackList* tracks = medium->TrackList();
+        CTrack* singleTrack = NULL;
+        int count = tracks->Count();
+    
+        for(int i = 0; i < count; i++)        
+        {
+            singleTrack = tracks->Item(i);
+            if(!singleTrack) continue;
+    
+            MP3Tag track;
+            track.AlbumID = firstAlbumId;
+            track.Title = singleTrack->Recording()->Title();
+            if (track.Title.empty()) singleTrack->Title();
+            track.Album = firstAlbum->Title();
+            track.Year = firstAlbum->Date();
+            track.TrackNumber = singleTrack->Number();
+            track.Artist = readArtists(singleTrack->Recording()->ArtistCredit());
+            if(track.Artist.empty()) track.Artist = readArtists(singleTrack->ArtistCredit());
+            if(track.Artist.empty()) track.Artist = readArtists(firstAlbum->ArtistCredit());
+            result->push_back(track);
+        }
+        currentMedium++;
     }
+
     resetParams();
     return result;
 }

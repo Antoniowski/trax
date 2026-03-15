@@ -21,6 +21,7 @@ typedef struct flags{
 typedef struct args{
     std::string albumName;
     std::string artistName;
+    int year;
     std::string url;
     std::string fullPath;
 } data_t;
