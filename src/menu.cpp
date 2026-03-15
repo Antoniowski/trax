@@ -10,7 +10,7 @@ void printMenu(){
     std::cout << "\t-d\t\t\tenable debug mode to see the yt-dlp output stream " << std::endl;
     std::cout << "\t-s\t\t\tuse single song mode when the inserted url doesn't refer to a playlist" << std::endl;
     std::cout << "\t-x, --no-meta\t\tavoid metadata download and application" << std::endl;
-    std::cout << "\t-k, --keep-image\t\tkeep the cover art image" << std::endl;
+    std::cout << "\t-k, --keep-image\tkeep the cover art image" << std::endl;
     std::cout << "\t-m, --only-meta\t\tskip the download and search only the metadata" << std::endl;;
     std::cout << "\t-i, --iteration\t\tspecified which result get from the metadata query (default is 0, the first one)" << std::endl;
     std::cout << "\t-y\t\t\talbum release year" << std::endl;

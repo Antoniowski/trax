@@ -64,6 +64,10 @@ The user can add flags to modify the program behaviour. Each flag should be adde
 | -d | enable debug mode to see the yt-dlp output stream |
 | -s | use single song mode when the inserted url doesn't refer to a playlist |
 | -x, --no-meta | avoid metadata download and file manipulation; just download audio |
+| -k, --keep-image | keep the cover art image |
+| -m, --only-meta | skip the download and search only the metadata |
+| -i, --iteration | specified which result get from the metadata query (default is 0, the first one) |
+| -y | album release year |
 
 ## Other Info
 The code also contains the C++ [spinner header](https://github.com/jkuri/spinners) created by [jkuri](https://github.com/jkuri)
