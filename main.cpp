@@ -22,9 +22,11 @@ int main(int argc, char *argv[])
     }
 
     // download phase
-    if(!downloadAudio(data, &flags)){
-        endProgram(flags);
-        return -1;
+    if(!flags.onlyMetadataMode){
+        if(!downloadAudio(data, &flags)){
+            endProgram(flags);
+            return -1;
+        }
     }
     
     if(!flags.noMetadataMode){
@@ -40,7 +42,8 @@ int main(int argc, char *argv[])
         editTagsAndCover(data, &flags, songTitles, result);        
 
         //clear useless files
-        removeTempFiles(result);
+        if(!flags.keepImage)
+            removeTempFiles(result);
     }
 
     //End

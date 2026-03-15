@@ -21,7 +21,7 @@ using namespace std;
 MetadataSearcher::MetadataSearcher(){}
 MetadataSearcher::~MetadataSearcher(){}
 
-vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, string artist, int year)
+vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, string artist, int year, int iteration)
 {
     CQuery query("trax");
     CQuery trackQuery("trax");
@@ -36,8 +36,13 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
         delete result;
         return NULL;
     }
-
+    
     string firstAlbumId = albumList->Item(0)->ID();
+    if(iteration != 0 && albumList->Count() >= iteration)
+    {
+        firstAlbumId = albumList->Item(iteration)->ID();
+    }
+
     CMetadata fullRelease = trackQuery.Query("release",firstAlbumId, "", lookupParams);
     CRelease* firstAlbum = fullRelease.Release();
 

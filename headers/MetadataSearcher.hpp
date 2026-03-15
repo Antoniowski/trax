@@ -47,7 +47,7 @@ class MetadataSearcher{
          * @param year year when the album was released
          * @return std::vector<MP3Tag>* vector with all the tags of the songs of the first album retrieved
          */
-        std::vector<MP3Tag>* searchAlbum(std::string album, std::string artist, int year = 0);
+        std::vector<MP3Tag>* searchAlbum(std::string album, std::string artist, int year = 0, int iteration = 0);
 
 
         /**
