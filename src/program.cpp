@@ -2,6 +2,7 @@
 #include "yt_dlp.hpp"
 #include <cstring>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 #include "MetadataSearcher.hpp"
@@ -34,6 +35,21 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
         }
         else if(std::string(argv[i]) == "-n" || std::string(argv[i]) == "--no-meta"){
             flag_struct->noMetadataMode = true;
+        }
+        else if(std::string(argv[i]) == "-k" || std::string(argv[i]) == "--keep-image"){
+            flag_struct->keepImage = true;
+        }else if(std::string(argv[i]) == "-i" || std::string(argv[i]) == "--iteration"){
+            try{
+                flag_struct->iteration = std::stoi(argv[i+1]);
+            }catch(const std::invalid_argument &e){
+                std::cout << "[ERROR] Use a valid value for the -i flag" << std::endl;
+                return false;
+            }catch(const std::out_of_range &e){
+                std::cout << "[ERROR] Value used for -i flag is out of range" << std::endl;
+                return false;
+            }
+        }else if(std::string(argv[i]) == "-m" || std::string(argv[i]) == "--only-meta"){
+            flag_struct->onlyMetadataMode = true;
         }
     }
 

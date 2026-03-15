@@ -10,6 +10,9 @@ typedef struct flags{
     bool debug = false;
     bool singleMode = false;
     bool noMetadataMode = false;
+    bool onlyMetadataMode = false;
+    bool keepImage = false;
+    int iteration = 0;
     bool pAudioDownloaded = false;
     bool pCoverDownloaded = false;
     bool pTagEdited = false;
