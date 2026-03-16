@@ -50,11 +50,22 @@ This is the easiest way to "install" Trax. Just download one of the [releases](h
 ## How To Use
 The basic way to use Trax is to use the following syntax: <br/> <br/>
 <code>trax [ALBUM] [ARTIST] [URL]</code> <br/><br/>
-This let the user to download an entire playlist and each downloaded video will be converted to mp3 files. Then the mp3 tags will be automatically filled with information retrieved using the specified album and artist. <br/>
+This let the user to download an entire playlist and each downloaded video will be converted to the desired format (default is mp3). Then the new file tags will be automatically filled with information retrieved using the specified album and artist. <br/>
 If no info is retrieved from the MusicBrainz database, only the files download and the mp3 convertion will be performed. <br/><br/>
 The user can add flags to modify the program behaviour. Each flag should be added after the URL field, with exception for "-h" flag.
 
 <code>trax [ALBUM] [ARTIST] [URL] [OPTIONS]</code> <br/>
+
+### Formats
+Output files can be converted to various formats using the <code>-f</code> flag. The available formats are:
+- mp3 (default)
+- aac
+- m4a
+- alac
+- flac
+- wav
+- opus
+- vorbis
 
 ### Flags
 | Flag | Description |
@@ -67,15 +78,13 @@ The user can add flags to modify the program behaviour. Each flag should be adde
 | -m, --only-meta | skip the download and search only the metadata |
 | -i, --iteration | -i [VALUE] specify which result to get from the metadata query (default is 0, the first one) |
 | -y | -y [YEAR] specify album release year |
+| -f | -f [FORMAT] used to specify the audio format of output files. Default is mp3. Other available formats are: aac, m4a, flac, alac, wav, opus, vorbis |
+
 
 ## Other Info
 The code also contains the C++ [spinner header](https://github.com/jkuri/spinners) created by [jkuri](https://github.com/jkuri)
 
 ## Supported Platforms
 - Linux
-- Windows 11 [TODO]
-- MacOs [TODO]
-
-## TODO List
-- Add support for Windows
-- Add support for MacOS
+- Windows 11 [TBD]
+- MacOs [TBD]

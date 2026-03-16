@@ -21,6 +21,7 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
     if(argc < 4){
         std::cout << "[ERROR] Expected at least 3 arguments: trax [ALBUM] [ARTIST] [URL]" << std::endl;
         std::cout << "For more information use trax -h or trax --help" << std::endl;
+        flag_struct->pError = true;
         return false;
     }
 
@@ -43,9 +44,11 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
                 flag_struct->iteration = std::stoi(argv[i+1]);
             }catch(const std::invalid_argument &e){
                 std::cout << "[ERROR] Use a valid value for the -i flag" << std::endl;
+                flag_struct->pError = true;
                 return false;
             }catch(const std::out_of_range &e){
                 std::cout << "[ERROR] Value used for -i flag is out of range" << std::endl;
+                flag_struct->pError = true;
                 return false;
             }
         }else if(std::string(argv[i]) == "-m" || std::string(argv[i]) == "--only-meta"){
@@ -55,9 +58,11 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
                 data->year = std::stoi(argv[i+1]);
             }catch(const std::invalid_argument &e){
                 std::cout << "[ERROR] Use a valid value for the -y flag" << std::endl;
+                flag_struct->pError = true;
                 return false;
             }catch(const std::out_of_range &e){
                 std::cout << "[ERROR] Value used for -y flag is out of range" << std::endl;
+                flag_struct->pError = true;
                 return false;
             }
         }else if(std::string(argv[i]) == "-f"){
@@ -73,16 +78,15 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
             flag_struct->format != "vorbis" &&
             flag_struct->format != "wav"){
                 std::cout << "[ERROR] File format " + flag_struct->format + " not supported" << std::endl;
+                flag_struct->pError = true;
                 return false;
             }
         }
     }
-
     data->albumName = std::string(argv[1]);
     data->artistName = std::string(argv[2]);
     data->url = std::string(argv[3]);
     data->fullPath = "./" + data->artistName + " - " + data->albumName + "/";
-
     return true;
 }
 
@@ -96,6 +100,7 @@ bool downloadAudio(data_t data, flags_t* flags){
 
     if(res == -1){
         std::cout << "[ERROR] There was a problem during audio download" << std::endl;
+        flags->pError = true;
         return false;
     }else{
         flags->pAudioDownloaded = true;
@@ -118,6 +123,7 @@ bool searchMetadata(data_t data, flags_t* flags, std::vector<std::string>* title
     //Exit from program if search failed
     if(*metadata == NULL){
         std::cout << "[ERROR] Music downloaded but metadata weren't updated" << std::endl;
+        flags->pError = true;
         delete searcher;
         return false;
     }
@@ -148,6 +154,9 @@ void removeTempFiles(std::vector<MetadataSearcher::MP3Tag>* metadata){
 }
 
 void endProgram(flags_t flags){
+    if(flags.pError && !flags.pAudioDownloaded && !flags.pCoverDownloaded && !flags.pTagEdited)
+        return;
+
     std::cout << "FINISHED!" << std::endl;
     std::cout << "AUDIO DOWNLOAD: ";
     std::cout << (flags.pAudioDownloaded ? "[OK]" : "[FAILED]") << std::endl;

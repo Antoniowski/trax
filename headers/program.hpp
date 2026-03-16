@@ -2,7 +2,6 @@
 #define _PROGRAM_H
 
 #include "MetadataSearcher.hpp"
-#include <map>
 #include <string>
 #include <vector>
 
@@ -18,6 +17,7 @@ typedef struct flags{
     bool pAudioDownloaded = false;
     bool pCoverDownloaded = false;
     bool pTagEdited = false;
+    bool pError = false;
 } flags_t;
 
 typedef struct args{
