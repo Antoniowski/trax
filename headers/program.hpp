@@ -2,6 +2,7 @@
 #define _PROGRAM_H
 
 #include "MetadataSearcher.hpp"
+#include <map>
 #include <string>
 #include <vector>
 
@@ -12,6 +13,7 @@ typedef struct flags{
     bool noMetadataMode = false;
     bool onlyMetadataMode = false;
     bool keepImage = false;
+    std::string format = "mp3";
     int iteration = 0;
     bool pAudioDownloaded = false;
     bool pCoverDownloaded = false;

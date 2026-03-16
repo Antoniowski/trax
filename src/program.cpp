@@ -60,6 +60,21 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
                 std::cout << "[ERROR] Value used for -y flag is out of range" << std::endl;
                 return false;
             }
+        }else if(std::string(argv[i]) == "-f"){
+            flag_struct->format = std::string(argv[i+1]);
+            
+            if(
+            flag_struct->format != "mp3" &&
+            flag_struct->format != "aac" &&
+            flag_struct->format != "m4a" &&
+            flag_struct->format != "alac" &&
+            flag_struct->format != "flac" &&
+            flag_struct->format != "opus" &&
+            flag_struct->format != "vorbis" &&
+            flag_struct->format != "wav"){
+                std::cout << "[ERROR] File format " + flag_struct->format + " not supported" << std::endl;
+                return false;
+            }
         }
     }
 
@@ -74,9 +89,9 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
 bool downloadAudio(data_t data, flags_t* flags){
     int res = 0;
     if(flags->singleMode){
-        res = downloadSong(data.url, flags->debug);
+        res = downloadSong(data.url, flags->format, flags->debug);
     }else{
-        res = downloadPlaylist(data.url, data.albumName, data.artistName, flags->debug);
+        res = downloadPlaylist(data.url, data.albumName, data.artistName, flags->format, flags->debug);
     }
 
     if(res == -1){

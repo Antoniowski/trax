@@ -9,10 +9,11 @@
  * @param url url of the playlist to download
  * @param album album name
  * @param artist artist name
+ * @param fileFormat file extension used to save audio
  * @param debug flag that indicates if the program was launched in debug mode
  * @return int 
  */
-int downloadPlaylist(std::string url,std::string album, std::string artist, bool debug = false);
+int downloadPlaylist(std::string url,std::string album, std::string artist, std::string fileFormat = "mp3", bool debug = false);
 
 
 /**
@@ -20,9 +21,10 @@ int downloadPlaylist(std::string url,std::string album, std::string artist, bool
  * dir where the program was launched.
  * 
  * @param url url of the song that will be downloaded
+ * @param fileFormat file extension used to save audio
  * @param debug flag that indicates if the program was launched in debug mode
  * @return int 
  */
-int downloadSong(std::string url, bool debug = false);
+int downloadSong(std::string url, std::string audioFormat = "mp3", bool debug = false);
 
 #endif
