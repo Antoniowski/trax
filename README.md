@@ -10,8 +10,7 @@
 
 A youtube audio downloader based on [yt-dlp](https://github.com/yt-dlp/yt-dlp) with automated id tag compilation using data from [MusicBrainz](https://musicbrainz.org/) databases. <br/>
 
-> 
-> #### DISCLAIMER
+> [!CAUTION]
 > The program at the moment <b>SHOULD</b> work without problems but it is still far to be perfect. <br/>
 >
 
@@ -66,8 +65,8 @@ The user can add flags to modify the program behaviour. Each flag should be adde
 | -x, --no-meta | avoid metadata download and file manipulation; just download audio |
 | -k, --keep-image | keep the cover art image |
 | -m, --only-meta | skip the download and search only the metadata |
-| -i, --iteration | specified which result get from the metadata query (default is 0, the first one) |
-| -y | album release year |
+| -i, --iteration | -i [VALUE] specify which result to get from the metadata query (default is 0, the first one) |
+| -y | -y [YEAR] specify album release year |
 
 ## Other Info
 The code also contains the C++ [spinner header](https://github.com/jkuri/spinners) created by [jkuri](https://github.com/jkuri)
@@ -78,8 +77,5 @@ The code also contains the C++ [spinner header](https://github.com/jkuri/spinner
 - MacOs [TODO]
 
 ## TODO List
-- ~~Suppress unwanted warning coming from MusicBrainz library~~ [DONE]
-- ~~Add installation script~~ [DONE]
 - Add support for Windows
-- Add support for MacOs 
-- ~~Fix problem when Cover Art is not found~~ [DONE]
+- Add support for MacOS
