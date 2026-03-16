@@ -7,6 +7,7 @@
 #include "taglib/mpegfile.h"
 #include <fstream>
 #include <iostream>
+#include <string>
 #include "utils.hpp"
 
 using namespace std;
@@ -86,6 +87,7 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
         file.save();
 
         // rename file
-        rename((songsDirPath + songNames[i]).c_str(), (songsDirPath + tag.Title + ".mp3").c_str());
+        std::string ext = songNames[i].substr(songNames[i].find_last_of("."));
+        rename((songsDirPath + songNames[i]).c_str(), (songsDirPath + tag.Title + ext).c_str());
     }
 }
