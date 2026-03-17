@@ -85,7 +85,7 @@ Sometimes the program could fail because the metadata retrieved from MusicBrainz
 
 ## Known Issues
 - The file conversion to <code>m4a</code> and to <code>aac</code> formats seems broken due to some problem with yt-dlp integration, It might not work.
-- Sometimes the cover art is not applied to files
+- Sometimes tags and cover art are not applied to files, in particular if the file format is not <code>mp3</code>
 
 ## Other Info
 The code also contains the C++ [spinner header](https://github.com/jkuri/spinners) created by [jkuri](https://github.com/jkuri)
