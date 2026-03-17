@@ -3,7 +3,6 @@
 #include <cstdio>
 #include <ostream>
 #include <string>
-#include "spinner.hpp"
 
 int downloadPlaylist(std::string url, std::string album, std::string artist, std::string fileFormat,  bool debug){
 
@@ -29,16 +28,7 @@ int downloadPlaylist(std::string url, std::string album, std::string artist, std
         int result = pclose(pipe);
         return WEXITSTATUS(result); 
     }else{
-        spinners::Spinner* spinner = new spinners::Spinner();
-        spinner->setText("Downloading ...");
-        spinner->setInterval(100);
-        spinner->setSymbols("dots4");
-
-        spinner->start();
-
-        int result = pclose(pipe);
-        spinner->stop();
-        
+        int result = pclose(pipe);        
         return WEXITSTATUS(result); 
     }
 }
@@ -72,16 +62,7 @@ int downloadSong(std::string url, std::string audioFormat, bool debug)
     }
     else
     {
-        spinners::Spinner* spinner = new spinners::Spinner();
-        spinner->setText("Downloading ...");
-        spinner->setInterval(100);
-        spinner->setSymbols("dots4");
-
-        spinner->start();
-
-        int result = pclose(pipe);
-        spinner->stop();
-        
+        int result = pclose(pipe);        
         return WEXITSTATUS(result); 
     }
 }

@@ -110,6 +110,14 @@ bool downloadAudio(data_t data, flags_t* flags){
 }
 
 bool searchMetadata(data_t data, flags_t* flags, std::vector<std::string>* titles, std::vector<MetadataSearcher::MP3Tag>** metadata){
+
+    //Check if folder with audio files exists
+    if(!std::filesystem::exists(data.fullPath) || std::filesystem::is_empty(data.fullPath)){
+        std::cout << "[ERROR] There is no directory containing audio files in the current path or the directory is empty" << std::endl;
+        flags->pError = true;
+        return false;
+    }
+
     //Retrieve album or song metadatas
     MetadataSearcher* searcher = new MetadataSearcher();
 
@@ -164,4 +172,22 @@ void endProgram(flags_t flags){
     std::cout << (flags.pCoverDownloaded ? "[OK]" : "[FAILED]") << std::endl;
     std::cout << "TAG EDIT: ";
     std::cout << (flags.pTagEdited ? "[OK]" : "[FAILED]") << std::endl;
+}
+
+void setupSpinner(spinners::Spinner** spinner, Phases currentPhase){
+    switch (currentPhase) {
+        case DOWNLOAD:
+            (*spinner)->setText("Downloading Audio");
+            break;
+        case METADATA_AND_COVER:
+            (*spinner)->setText("Looking For Metadata And Cover");
+            break;
+        case TAG_EDIT:
+            (*spinner)->setText("Editing Tags");
+            break;
+        default:
+            break;
+    }
+    (*spinner)->setInterval(100);
+    (*spinner)->setSymbols("dots4");
 }

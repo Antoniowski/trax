@@ -80,6 +80,12 @@ Output files can be converted to various formats using the <code>-f</code> flag.
 | -y | -y [YEAR] specify album release year |
 | -f | -f [FORMAT] used to specify the audio format of output files. Default is mp3. Other available formats are: aac, m4a, flac, alac, wav, opus, vorbis |
 
+## Workarounds
+Sometimes the program could fail because the metadata retrieved from MusicBrainz database are broken or incomplete. To retry a metadata research you can use the <code>-m</code> flag to skip the download phase.<br/> If errors still occur try also to add a specific year for the album using the <code>-y</code> flag and try to use the <code>-i</code> flag to force the program to retrieve a different result from the query results list.
+
+## Known Issues
+- The file conversion to <code>m4a</code> and to <code>aac</code> formats seems broken due to some problem with yt-dlp integration, It might not work.
+- Sometimes the cover art is not applied to files
 
 ## Other Info
 The code also contains the C++ [spinner header](https://github.com/jkuri/spinners) created by [jkuri](https://github.com/jkuri)

@@ -2,6 +2,7 @@
 #define _PROGRAM_H
 
 #include "MetadataSearcher.hpp"
+#include "spinner.hpp"
 #include <string>
 #include <vector>
 
@@ -27,6 +28,12 @@ typedef struct args{
     std::string url;
     std::string fullPath;
 } data_t;
+
+enum Phases{
+    DOWNLOAD,
+    METADATA_AND_COVER,
+    TAG_EDIT,
+};
 
 /**
  * @brief function to parse main args and fill flags_t and data_t data structures
@@ -95,5 +102,14 @@ void removeTempFiles(std::vector<MetadataSearcher::MP3Tag>* metadata);
  * @param flags pointer to structure containing all program flags
  */
 void endProgram(flags_t flags);
+
+
+/**
+ * @brief setup spinner text and type based on current program phase
+ * 
+ * @param spinner reference to the spinner that will be modified
+ * @param currentPhase current program phase
+ */
+void setupSpinner(spinners::Spinner** spinner, Phases currentPhase);
 
 #endif
