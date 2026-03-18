@@ -5,6 +5,7 @@
 #include <iostream>
 #include <musicbrainz5/MediumList.h>
 #include <musicbrainz5/Medium.h>
+#include <musicbrainz5/TagList.h>
 #include <musicbrainz5/Track.h>
 #include <musicbrainz5/Metadata.h>
 #include <musicbrainz5/Query.h>
@@ -12,6 +13,8 @@
 #include <musicbrainz5/Release.h>
 #include <musicbrainz5/ReleaseList.h>
 #include <musicbrainz5/TrackList.h>
+#include <musicbrainz5/TagList.h>
+#include <musicbrainz5/Tag.h>
 #include <ostream>
 #include <string>
 #include <vector>
@@ -54,6 +57,16 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
             return NULL;
     }
 
+    CTagList* genresList = fullRelease.TagList();
+    string genresString = "";
+    if (genresList) {
+        for(int i = 0; i < genresList->NumItems(); i++){
+            if(!genresString.empty()) genresString += "/";
+            genresString += genresList->Item(i)->Name();
+        }
+    }
+
+    // Songs
     int currentMedium = 0;
     while (currentMedium < firstAlbum->MediumList()->Count()) {
         CMedium* medium = firstAlbum->MediumList()->Item(currentMedium);
@@ -76,6 +89,7 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
             track.Artist = readArtists(singleTrack->Recording()->ArtistCredit());
             if(track.Artist.empty()) track.Artist = readArtists(singleTrack->ArtistCredit());
             if(track.Artist.empty()) track.Artist = readArtists(firstAlbum->ArtistCredit());
+            track.Genre = genresString;
             result->push_back(track);
         }
         currentMedium++;
