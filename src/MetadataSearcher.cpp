@@ -31,7 +31,10 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
     setParams(album, artist, year);
     setLookupParams();
     vector<MetadataSearcher::MP3Tag>* result = new vector<MetadataSearcher::MP3Tag>();
+
     CMetadata metadata = query.Query("release", "", "", params);    
+    
+    // Album
     CReleaseList* albumList = metadata.ReleaseList();
     if(!albumList || albumList->Count() == 0)
     {
@@ -57,6 +60,7 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
             return NULL;
     }
 
+    //Genres
     CTagList* genresList = fullRelease.TagList();
     string genresString = "";
     if (genresList) {
@@ -100,15 +104,17 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
 }
 
 
-MetadataSearcher::MP3Tag* MetadataSearcher::searchSong(string songName, string album, string artist, int year)
+MetadataSearcher::MP3Tag* MetadataSearcher::searchSong(string songName, string album, string artist, int year, int iteration)
 {
     CQuery query("trax");
     CQuery trackQuery("trax");
-    setParams(album, artist, year);
+    setParams(songName, album, artist, year);
     setLookupParams();
     MP3Tag* result = new MP3Tag();
 
     CMetadata metadata = query.Query("release", "", "", params);    
+
+    // Album
     CReleaseList* albumList = metadata.ReleaseList();
     if(!albumList || albumList->Count() == 0)
     {
@@ -117,7 +123,13 @@ MetadataSearcher::MP3Tag* MetadataSearcher::searchSong(string songName, string a
         return NULL;
     }
 
-    string firstAlbumId = albumList->Item(0)->ID();
+    string firstAlbumId;
+    if(iteration != 0 && albumList->Count() - 1 >= iteration){
+        firstAlbumId = albumList->Item(iteration)->ID();
+    }else{
+        firstAlbumId = albumList->Item(0)->ID();
+    }
+
     CMetadata fullRelease = trackQuery.Query("release",firstAlbumId, "", lookupParams);
     CRelease* firstAlbum = fullRelease.Release();
 
@@ -127,27 +139,44 @@ MetadataSearcher::MP3Tag* MetadataSearcher::searchSong(string songName, string a
             delete result;
             return NULL;
     }
-    CMedium* medium = firstAlbum->MediumList()->Item(0);
-    CTrackList* tracks = medium->TrackList();
-    CTrack* singleTrack = NULL;
 
-    for(int i = 0; i < tracks->Count();i++)        
-    {
-        singleTrack = tracks->Item(i);
-        if(!singleTrack) continue;
-        if(!(singleTrack->Recording()->Title().find(songName) != string::npos)) continue;
-
-        MetadataSearcher::MP3Tag track;
-        track.Title = singleTrack->Recording()->Title();
-        track.Album = firstAlbum->Title();
-        track.Year = firstAlbum->Date();
-        track.Artist = readArtists(singleTrack->Recording()->ArtistCredit());
-        if(track.Artist.empty()) track.Artist = readArtists(singleTrack->ArtistCredit());
-        if(track.Artist.empty()) track.Artist = readArtists(firstAlbum->ArtistCredit());
-        track.TrackNumber = singleTrack->Number();
-        *result = track;
-        return result;
+    //Genres
+    CTagList* genresList = fullRelease.TagList();
+    string genresString = "";
+    if (genresList) {
+        for(int i = 0; i < genresList->NumItems(); i++){
+            if(!genresString.empty()) genresString += "/";
+            genresString += genresList->Item(i)->Name();
+        }
     }
+
+    int currentMedium = 0;
+    while (currentMedium < firstAlbum->MediumList()->Count()) {
+        CMedium* medium = firstAlbum->MediumList()->Item(0);
+        CTrackList* tracks = medium->TrackList();
+        CTrack* singleTrack = NULL;
+    
+        for(int i = 0; i < tracks->Count();i++)        
+        {
+            singleTrack = tracks->Item(i);
+            if(!singleTrack) continue;
+            if(!(singleTrack->Recording()->Title().find(songName) != string::npos)) continue; // not found
+    
+            MetadataSearcher::MP3Tag track;
+            track.Title = singleTrack->Recording()->Title();
+            track.Album = firstAlbum->Title();
+            track.Year = firstAlbum->Date();
+            track.Artist = readArtists(singleTrack->Recording()->ArtistCredit());
+            if(track.Artist.empty()) track.Artist = readArtists(singleTrack->ArtistCredit());
+            if(track.Artist.empty()) track.Artist = readArtists(firstAlbum->ArtistCredit());
+            track.TrackNumber = singleTrack->Number();
+            track.Genre = genresString;
+            *result = track;
+            return result;
+        }
+        currentMedium++;
+    }
+
     delete result;
     resetParams();
     return NULL;

@@ -45,6 +45,7 @@ class MetadataSearcher{
          * @param album album name (case sensitive)
          * @param artist artist name (case sensitive)
          * @param year year when the album was released
+         * @param iteration parameter used to specify the item to retrive from the album list result
          * @return std::vector<MP3Tag>* vector with all the tags of the songs of the first album retrieved
          */
         std::vector<MP3Tag>* searchAlbum(std::string album, std::string artist, int year = 0, int iteration = 0);
@@ -57,9 +58,10 @@ class MetadataSearcher{
          * @param album album name (case sensitive)
          * @param artist artist name (case sensitive)
          * @param year year when the album was released
+         * @param iteration parameter used to specify the item to retrive from the album list result
          * @return MP3Tag* tag of the specified song of the first album retrieved
          */
-        MP3Tag* searchSong(std::string songName, std::string album, std::string artist, int year = 0);
+        MP3Tag* searchSong(std::string songName, std::string album, std::string artist, int year = 0, int iteration = 0);
 
 
         /**
