@@ -26,6 +26,12 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+    if(flags.onlyMetadataMode || flags.noMetadataMode){
+        std::cout << "B R U H" << std::endl;
+        delete spinner;
+        return 1;
+    }
+
     if(!flags.onlyMetadataMode){
         // download phase
         if(!flags.debug){

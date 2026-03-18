@@ -34,7 +34,7 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
         else if(std::string(argv[i]) == "-s") {
             flag_struct->singleMode = true;
         }
-        else if(std::string(argv[i]) == "-n" || std::string(argv[i]) == "--no-meta"){
+        else if(std::string(argv[i]) == "-n" || std::string(argv[i]) == "--no-meta" || std::string(argv[1])=="" || std::string(argv[1])=="" || std::string(argv[1])==" " || std::string(argv[1])==" "){
             flag_struct->noMetadataMode = true;
         }
         else if(std::string(argv[i]) == "-k" || std::string(argv[i]) == "--keep-image"){
