@@ -12,7 +12,7 @@
 
 using namespace std;
 
-void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSearcher::MP3Tag>* metadatas, string artistName)
+void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSearcher::MP3Tag>* metadatas, string artistName, bool noImage)
 {
     for(int i = 0; i < songNames.size(); i++)
     {
@@ -62,26 +62,29 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
         }
         
         // edit image
-        try
+        if(!noImage)
         {
-            ifstream imageFile(string("./" + tag.AlbumID + "-front.jpg"), ios::binary);
-            vector<char> imageData{istreambuf_iterator<char>(imageFile), istreambuf_iterator<char>{}};
-            TagLib::ID3v2::Tag* tagV2 = file.ID3v2Tag(true);
-            tagV2->removeFrames("APIC");
-    
-            // Create the picture frame
-            auto* frame = new TagLib::ID3v2::AttachedPictureFrame();
-            frame->setMimeType("image/jpeg");  // or "image/png"
-            frame->setType(TagLib::ID3v2::AttachedPictureFrame::FrontCover);
-            frame->setDescription("Front Cover");
-            frame->setPicture(TagLib::ByteVector(imageData.data(), imageData.size()));
-    
-            // Attach and save
-            tagV2->addFrame(frame);
-        }
-        catch(exception e )
-        {
-            cout << "[WARNING] Cover art attachment skipped." << endl;
+            try
+            {
+                ifstream imageFile(string("./" + tag.AlbumID + "-front.jpg"), ios::binary);
+                vector<char> imageData{istreambuf_iterator<char>(imageFile), istreambuf_iterator<char>{}};
+                TagLib::ID3v2::Tag* tagV2 = file.ID3v2Tag(true);
+                tagV2->removeFrames("APIC");
+        
+                // Create the picture frame
+                auto* frame = new TagLib::ID3v2::AttachedPictureFrame();
+                frame->setMimeType("image/jpeg");  // or "image/png"
+                frame->setType(TagLib::ID3v2::AttachedPictureFrame::FrontCover);
+                frame->setDescription("Front Cover");
+                frame->setPicture(TagLib::ByteVector(imageData.data(), imageData.size()));
+        
+                // Attach and save
+                tagV2->addFrame(frame);
+            }
+            catch(exception e )
+            {
+                cout << "[WARNING] Cover art attachment skipped." << endl;
+            }
         }
         
         file.save();

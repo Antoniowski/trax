@@ -81,6 +81,8 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
                 flag_struct->pError = true;
                 return false;
             }
+        }else if(std::string(argv[i]) == "--no-image"){
+            flag_struct->noImage = true;
         }
     }
     data->albumName = std::string(argv[1]);
@@ -137,13 +139,16 @@ bool searchMetadata(data_t data, flags_t* flags, std::vector<std::string>* title
     }
 
     // Download cover art
-    try{
-        searcher->downloadCoverArt((*metadata)->at(0).AlbumID);
-        flags->pCoverDownloaded = true;
-    }
-    catch (std::exception e){
-        std::cout << "[WARNING] There was a problem while downloading the cover art or cover art was not found in database" << std::endl;
-        flags->pCoverDownloaded = false;
+    if(!flags->noImage)
+    {
+        try{
+            searcher->downloadCoverArt((*metadata)->at(0).AlbumID);
+            flags->pCoverDownloaded = true;
+        }
+        catch (std::exception e){
+            std::cout << "[WARNING] There was a problem while downloading the cover art or cover art was not found in database" << std::endl;
+            flags->pCoverDownloaded = false;
+        }
     }
 
     //Edit tags phase
@@ -153,7 +158,7 @@ bool searchMetadata(data_t data, flags_t* flags, std::vector<std::string>* title
 }
 
 void editTagsAndCover(data_t data, flags_t* flags, std::vector<std::string> titles, std::vector<MetadataSearcher::MP3Tag> *metadata){
-    editTags(titles, data.fullPath, metadata, data.artistName);
+    editTags(titles, data.fullPath, metadata, data.artistName, flags->noImage);
     flags->pTagEdited = true;
 }
 
