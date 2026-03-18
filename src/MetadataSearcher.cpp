@@ -161,7 +161,7 @@ void MetadataSearcher::setParams(string songName, string album, string artist, i
 
 void MetadataSearcher::setLookupParams()
 {
-    lookupParams["inc"] = "recordings artist-credits";
+    lookupParams["inc"] = "recordings artist-credits genres";
 }
 
 

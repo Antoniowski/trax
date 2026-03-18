@@ -8,6 +8,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <taglib/tstring.h>
 #include "utils.hpp"
 
 using namespace std;
@@ -41,9 +42,9 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
         if (!songFound)
             continue;
 
-        file.tag()->setTitle((tag.Title.empty() || tag.Title == " ") ? string("song_" + to_string(i)) : tag.Title);
-        file.tag()->setAlbum(tag.Album);
-        file.tag()->setArtist(artistName);
+        file.tag()->setTitle(TagLib::String((tag.Title.empty() || tag.Title == " ") ? string("song_" + to_string(i)) : tag.Title, TagLib::String::UTF8));
+        file.tag()->setAlbum(TagLib::String(tag.Album, TagLib::String::UTF8));
+        file.tag()->setArtist(TagLib::String(artistName, TagLib::String::UTF8));
         try 
         {
             file.tag()->setTrack(stoi(tag.TrackNumber));
@@ -60,6 +61,8 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
         {
             file.tag()->setYear(0);
         }
+
+        file.tag()->setGenre(TagLib::String(tag.Genre, TagLib::String::UTF8));
         
         // edit image
         if(!noImage)
