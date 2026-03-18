@@ -5,6 +5,7 @@
 #include "taglib/id3v2tag.h"
 #include "taglib/attachedpictureframe.h"
 #include "taglib/mpegfile.h"
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -96,4 +97,66 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
         std::string ext = songNames[i].substr(songNames[i].find_last_of("."));
         rename((songsDirPath + songNames[i]).c_str(), (songsDirPath + tag.Title + ext).c_str());
     }
+}
+
+
+
+void editTag(std::string songName, MetadataSearcher::MP3Tag* metadata, std::string artistName, bool noImage){
+    std::string currentPath = "./";
+    TagLib::MPEG::File file((currentPath+songName).c_str());
+        if(!file.isValid())
+            return;
+        file.tag()->setTitle(TagLib::String((metadata->Title.empty() || metadata->Title == " ") ? string("song") : metadata->Title, TagLib::String::UTF8));
+        file.tag()->setAlbum(TagLib::String(metadata->Album, TagLib::String::UTF8));
+        file.tag()->setArtist(TagLib::String(artistName, TagLib::String::UTF8));
+        try 
+        {
+            file.tag()->setTrack(stoi(metadata->TrackNumber));
+        }
+        catch (exception e) 
+        {
+            file.tag()->setTrack(0);
+        }
+        try 
+        {
+            file.tag()->setYear(stoi((metadata->Year).substr(0, 4)));
+        } 
+        catch (exception e) 
+        {
+            file.tag()->setYear(0);
+        }
+
+        file.tag()->setGenre(TagLib::String(metadata->Genre, TagLib::String::UTF8));
+        
+        // edit image
+        if(!noImage)
+        {
+            try
+            {
+                ifstream imageFile(string("./" + metadata->AlbumID + "-front.jpg"), ios::binary);
+                vector<char> imageData{istreambuf_iterator<char>(imageFile), istreambuf_iterator<char>{}};
+                TagLib::ID3v2::Tag* tagV2 = file.ID3v2Tag(true);
+                tagV2->removeFrames("APIC");
+        
+                // Create the picture frame
+                auto* frame = new TagLib::ID3v2::AttachedPictureFrame();
+                frame->setMimeType("image/jpeg");  // or "image/png"
+                frame->setType(TagLib::ID3v2::AttachedPictureFrame::FrontCover);
+                frame->setDescription("Front Cover");
+                frame->setPicture(TagLib::ByteVector(imageData.data(), imageData.size()));
+        
+                // Attach and save
+                tagV2->addFrame(frame);
+            }
+            catch(exception e )
+            {
+                cout << "[WARNING] Cover art attachment skipped." << endl;
+            }
+        }
+        
+        file.save();
+
+        // rename file
+        std::string ext = songName.substr(songName.find_last_of("."));
+        rename((currentPath + songName).c_str(), (currentPath + metadata->Title + ext).c_str());
 }

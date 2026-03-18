@@ -1,5 +1,7 @@
+#include "MetadataSearcher.hpp"
 #include "program.hpp"
 #include "menu.hpp"
+#include <cstddef>
 #include <iostream>
 #include <ostream>
 #include <string>
@@ -26,7 +28,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    if(flags.onlyMetadataMode || flags.noMetadataMode){
+    if(flags.onlyMetadataMode && flags.noMetadataMode){
         std::cout << "B R U H" << std::endl;
         delete spinner;
         return 1;
@@ -47,29 +49,45 @@ int main(int argc, char *argv[])
     }
 
     if(!flags.noMetadataMode){
-        // retrieve album or song metadatas
-        if(!flags.debug){
-            setupSpinner(&spinner, METADATA_AND_COVER);
-        }
-        vector<string> songTitles;
-        std::vector<MetadataSearcher::MP3Tag>* result = NULL;
+        if(!flags.debug) setupSpinner(&spinner, METADATA_AND_COVER);
+        
+        if(flags.singleMode){
+            // retrieve album or song metadatas
+            string songFileName;
+            MetadataSearcher::MP3Tag* singleResult = NULL;
+            if(!searchMetadata(data, &flags, &songFileName, &singleResult)){
+                endProgram(flags);
+                spinner->stop();
+                delete spinner;
+                return -1;
+            }
 
-        if(!searchMetadata(data, &flags,  &songTitles, &result)){
-            endProgram(flags);
-            spinner->stop();
-            delete spinner;
-            return -1;
-        }
+            // edit tags
+            if(!flags.debug) setupSpinner(&spinner, TAG_EDIT);
+            editTagsAndCover(data, &flags, songFileName, singleResult);        
+    
+            //clear useless files
+            if(!flags.keepImage) removeTempFiles(singleResult);
 
-        // edit tags
-        if(!flags.debug){
-            setupSpinner(&spinner, TAG_EDIT);
         }
-        editTagsAndCover(data, &flags, songTitles, result);        
-
-        //clear useless files
-        if(!flags.keepImage)
-            removeTempFiles(result);
+        else{
+            vector<string> songTitles;
+            std::vector<MetadataSearcher::MP3Tag>* result = NULL;
+            // retrieve album or song metadatas
+            if(!searchMetadata(data, &flags,  &songTitles, &result)){
+                endProgram(flags);
+                spinner->stop();
+                delete spinner;
+                return -1;
+            }
+    
+            // edit tags
+            if(!flags.debug) setupSpinner(&spinner, TAG_EDIT);
+            editTagsAndCover(data, &flags, songTitles, result);        
+    
+            //clear useless files
+            if(!flags.keepImage) removeTempFiles(result);
+        }
     }
 
     //End

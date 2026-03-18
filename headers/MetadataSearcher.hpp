@@ -83,7 +83,7 @@ class MetadataSearcher{
          * @param artist artist name (case sensitive)
          * @param year year when the album was released
          */
-        void setParams(std::string album, std::string artist, int year);
+        void setParams(std::string album, std::string artist, int year = 0);
 
 
         /**
@@ -94,7 +94,7 @@ class MetadataSearcher{
          * @param artist artist name (case sensitive)
          * @param year year when the album was released
          */
-        void setParams(std::string songName, std::string album, std::string artist, int year);
+        void setParams(std::string songName, std::string album, std::string artist, int year = 0);
 
 
         /**

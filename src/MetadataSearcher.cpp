@@ -1,6 +1,7 @@
 #include "MetadataSearcher.hpp"
 #include <cstddef>
 #include "coverart/CoverArt.h"
+#include "utils.hpp"
 #include <fstream>
 #include <iostream>
 #include <musicbrainz5/MediumList.h>
@@ -36,8 +37,7 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
     
     // Album
     CReleaseList* albumList = metadata.ReleaseList();
-    if(!albumList || albumList->Count() == 0)
-    {
+    if(!albumList || albumList->Count() == 0){
         cout << "No albums found that parameters" << endl;
         delete result;
         return NULL;
@@ -46,15 +46,15 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
     string firstAlbumId;
     if(iteration != 0 && albumList->Count() - 1 >= iteration){
         firstAlbumId = albumList->Item(iteration)->ID();
-    }else{
+    }
+    else{
         firstAlbumId = albumList->Item(0)->ID();
     }
 
     CMetadata fullRelease = trackQuery.Query("release",firstAlbumId, "", lookupParams);
     CRelease* firstAlbum = fullRelease.Release();
 
-    if (!firstAlbum || !firstAlbum->MediumList() || firstAlbum->MediumList()->Count() == 0)
-    {
+    if (!firstAlbum || !firstAlbum->MediumList() || firstAlbum->MediumList()->Count() == 0){
             cout << "No medium found" << endl;
             delete result;
             return NULL;
@@ -112,12 +112,11 @@ MetadataSearcher::MP3Tag* MetadataSearcher::searchSong(string songName, string a
     setLookupParams();
     MP3Tag* result = new MP3Tag();
 
-    CMetadata metadata = query.Query("release", "", "", params);    
+    CMetadata metadata = query.Query("release", "", "", params);
 
     // Album
     CReleaseList* albumList = metadata.ReleaseList();
-    if(!albumList || albumList->Count() == 0)
-    {
+    if(!albumList || albumList->Count() == 0){
         cout << "No albums found that parameters" << endl;
         delete result;
         return NULL;
@@ -126,15 +125,15 @@ MetadataSearcher::MP3Tag* MetadataSearcher::searchSong(string songName, string a
     string firstAlbumId;
     if(iteration != 0 && albumList->Count() - 1 >= iteration){
         firstAlbumId = albumList->Item(iteration)->ID();
-    }else{
+    }
+    else{
         firstAlbumId = albumList->Item(0)->ID();
     }
 
     CMetadata fullRelease = trackQuery.Query("release",firstAlbumId, "", lookupParams);
     CRelease* firstAlbum = fullRelease.Release();
 
-    if (!firstAlbum || !firstAlbum->MediumList() || firstAlbum->MediumList()->Count() == 0)
-    {
+    if (!firstAlbum || !firstAlbum->MediumList() || firstAlbum->MediumList()->Count() == 0){
             cout << "No medium found" << endl;
             delete result;
             return NULL;
@@ -150,20 +149,28 @@ MetadataSearcher::MP3Tag* MetadataSearcher::searchSong(string songName, string a
         }
     }
 
+    // Songs
     int currentMedium = 0;
     while (currentMedium < firstAlbum->MediumList()->Count()) {
-        CMedium* medium = firstAlbum->MediumList()->Item(0);
+        CMedium* medium = firstAlbum->MediumList()->Item(currentMedium);
         CTrackList* tracks = medium->TrackList();
         CTrack* singleTrack = NULL;
-    
-        for(int i = 0; i < tracks->Count();i++)        
+        int count = tracks->Count();
+
+        for(int i = 0; i < count; i++)
         {
             singleTrack = tracks->Item(i);
             if(!singleTrack) continue;
-            if(!(singleTrack->Recording()->Title().find(songName) != string::npos)) continue; // not found
+            string strTitle = singleTrack->Recording()->Title();
+            string strFile = songName;
+            prepareStringForComparison(&strFile);
+            prepareStringForComparison(&strTitle);
+            if(strTitle.find(strFile) == string::npos) continue; // not found
     
-            MetadataSearcher::MP3Tag track;
+            MP3Tag track;
+            track.AlbumID = firstAlbumId;
             track.Title = singleTrack->Recording()->Title();
+            if (track.Title.empty()) singleTrack->Title();
             track.Album = firstAlbum->Title();
             track.Year = firstAlbum->Date();
             track.Artist = readArtists(singleTrack->Recording()->ArtistCredit());
@@ -183,7 +190,7 @@ MetadataSearcher::MP3Tag* MetadataSearcher::searchSong(string songName, string a
 }
 
 
-void MetadataSearcher::setParams(string album, string artist, int year = 0)
+void MetadataSearcher::setParams(string album, string artist, int year)
 {
     if(year == 0)
         params["query"] = "release:\""+ album +"\" AND artist:\""+ artist +"\"";
@@ -192,7 +199,7 @@ void MetadataSearcher::setParams(string album, string artist, int year = 0)
 }
 
 
-void MetadataSearcher::setParams(string songName, string album, string artist, int year = 0)
+void MetadataSearcher::setParams(string songName, string album, string artist, int year)
 {
     if(year == 0)
         params["query"] = "recording:\"" + songName + "\" release:\""+ album +"\" AND artist:\""+ artist +"\"";

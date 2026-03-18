@@ -33,39 +33,53 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
         }
         else if(std::string(argv[i]) == "-s") {
             flag_struct->singleMode = true;
+            data->songName = argv[i + 1];
+            if(data->songName.empty() || data->songName == ""){
+                std::cout << "[ERROR] Specify a valid song name" << std::endl;
+                flag_struct->pError = true;
+                return false;
+            }
         }
-        else if(std::string(argv[i]) == "-n" || std::string(argv[i]) == "--no-meta" || std::string(argv[1])=="" || std::string(argv[1])=="" || std::string(argv[1])==" " || std::string(argv[1])==" "){
+        else if(std::string(argv[i]) == "-n" || std::string(argv[i]) == "--no-meta" || std::string(argv[1])=="" || std::string(argv[2])=="" || std::string(argv[1])==" " || std::string(argv[2])==" "){
             flag_struct->noMetadataMode = true;
         }
         else if(std::string(argv[i]) == "-k" || std::string(argv[i]) == "--keep-image"){
             flag_struct->keepImage = true;
-        }else if(std::string(argv[i]) == "-i" || std::string(argv[i]) == "--iteration"){
+        }
+        else if(std::string(argv[i]) == "-i" || std::string(argv[i]) == "--iteration"){
             try{
                 flag_struct->iteration = std::stoi(argv[i+1]);
-            }catch(const std::invalid_argument &e){
+            }
+            catch(const std::invalid_argument &e){
                 std::cout << "[ERROR] Use a valid value for the -i flag" << std::endl;
                 flag_struct->pError = true;
                 return false;
-            }catch(const std::out_of_range &e){
+            }
+            catch(const std::out_of_range &e){
                 std::cout << "[ERROR] Value used for -i flag is out of range" << std::endl;
                 flag_struct->pError = true;
                 return false;
             }
-        }else if(std::string(argv[i]) == "-m" || std::string(argv[i]) == "--only-meta"){
+        }
+        else if(std::string(argv[i]) == "-m" || std::string(argv[i]) == "--only-meta"){
             flag_struct->onlyMetadataMode = true;
-        }else if(std::string(argv[i]) == "-y"){
+        }
+        else if(std::string(argv[i]) == "-y"){
             try{
                 data->year = std::stoi(argv[i+1]);
-            }catch(const std::invalid_argument &e){
+            }
+            catch(const std::invalid_argument &e){
                 std::cout << "[ERROR] Use a valid value for the -y flag" << std::endl;
                 flag_struct->pError = true;
                 return false;
-            }catch(const std::out_of_range &e){
+            }
+            catch(const std::out_of_range &e){
                 std::cout << "[ERROR] Value used for -y flag is out of range" << std::endl;
                 flag_struct->pError = true;
                 return false;
             }
-        }else if(std::string(argv[i]) == "-f"){
+        }
+        else if(std::string(argv[i]) == "-f"){
             flag_struct->format = std::string(argv[i+1]);
             
             if(
@@ -157,14 +171,65 @@ bool searchMetadata(data_t data, flags_t* flags, std::vector<std::string>* title
     return true;
 }
 
+
+bool searchMetadata(data_t data, flags_t* flags, std::string* songFileName, MetadataSearcher::MP3Tag** metadata){
+    //Retrieve album or song metadatas
+    MetadataSearcher* searcher = new MetadataSearcher();
+    if(flags->debug){
+        *metadata = searcher->searchSong(data.songName, data.albumName, data.artistName, data.year, flags->iteration);
+    }else{
+        OutputSuppressor suppress;
+        *metadata = searcher->searchSong(data.songName, data.albumName, data.artistName, data.year, flags->iteration);
+    }
+    
+    //Exit from program if search failed
+    if(*metadata == NULL){
+        std::cout << "[ERROR] Music downloaded but metadata weren't updated" << std::endl;
+        flags->pError = true;
+        delete searcher;
+        return false;
+    }
+
+    // Download cover art
+    if(!flags->noImage)
+    {
+        try{
+            searcher->downloadCoverArt((*metadata)->AlbumID);
+            flags->pCoverDownloaded = true;
+        }
+        catch (std::exception e){
+            std::cout << "[WARNING] There was a problem while downloading the cover art or cover art was not found in database" << std::endl;
+            flags->pCoverDownloaded = false;
+        }
+    }
+
+    //Edit tags phase
+    retrieveSingleFileSongName(data.songName, songFileName);
+    delete searcher;
+    return true;
+}
+
+
 void editTagsAndCover(data_t data, flags_t* flags, std::vector<std::string> titles, std::vector<MetadataSearcher::MP3Tag> *metadata){
     editTags(titles, data.fullPath, metadata, data.artistName, flags->noImage);
     flags->pTagEdited = true;
 }
 
+
+void editTagsAndCover(data_t data, flags_t* flags, std::string songFileName, MetadataSearcher::MP3Tag *metadata){
+    editTag(songFileName, metadata, data.artistName, flags->noImage);
+    flags->pTagEdited = true;
+}
+
+
 void removeTempFiles(std::vector<MetadataSearcher::MP3Tag>* metadata){
     std::filesystem::remove("./"+metadata->at(0).AlbumID+"-front.jpg");
 }
+
+void removeTempFiles(MetadataSearcher::MP3Tag* metadata){
+    std::filesystem::remove("./"+metadata->AlbumID+"-front.jpg");
+}
+
 
 void endProgram(flags_t flags){
     if(flags.pError && !flags.pAudioDownloaded && !flags.pCoverDownloaded && !flags.pTagEdited)

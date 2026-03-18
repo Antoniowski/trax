@@ -23,11 +23,12 @@ typedef struct flags{
 } flags_t;
 
 typedef struct args{
-    std::string albumName;
-    std::string artistName;
-    int year;
-    std::string url;
-    std::string fullPath;
+    std::string albumName = "";
+    std::string artistName = "";
+    std::string songName = "";
+    int year = 0;
+    std::string url = "";
+    std::string fullPath = "";
 } data_t;
 
 enum Phases{
@@ -76,6 +77,19 @@ bool searchMetadata(data_t data, flags_t* flags, std::vector<std::string>* title
 
 
 /**
+ * @brief function that handles the metadata research using a query to the MusicBrainz5 database. The result is saved using the metadata parameter pointer. 
+ * 
+ * @param data pointer to structure containing program useful data
+ * @param flags pointer to structure containing all program flags
+ * @param songFileName name of the downloaded audio file
+ * @param metadata pointer to the pointer that will be used to save the result of the query
+ * @return true if the research is finished without problems
+ * @return false if the research fails 
+ */
+bool searchMetadata(data_t data, flags_t* flags, std::string* songFileName, MetadataSearcher::MP3Tag** metadata);
+
+
+/**
  * @brief function that handles the tag editing phase of the program. This will look for the folder containing the downloaded audios and will iterate them.
  * If the file name corresponds to or contains one of the songs title stored in the metadata vector, then the function will edit its tag using the information
  * of the correct retrieved tag and then will also rename the file with the song title. As last thing, this function is also responsible of the downlaod and 
@@ -90,11 +104,31 @@ void editTagsAndCover(data_t data, flags_t* flags,  std::vector<std::string> tit
 
 
 /**
+ * @brief function that handles the tag editing phase of the program. This is will look for the audio file containing the song name and then will edit
+ * its tag and cover
+ * @param data structure containing program useful data
+ * @param flags pointer to structure containing all program flags
+ * @param songFileName name of the audio
+ * @param metadata pointer to the MP#Tag that will  contain the file tag
+ */
+void editTagsAndCover(data_t data, flags_t* flags, std::string songFileName, MetadataSearcher::MP3Tag *metadata);
+
+
+/**
  * @brief remove the temporary files created during the metadata research
  * 
  * @param metadata pointer to the pointer contaings the tags of each song of the searched album. It is used to retrieve the downloaded album ID.
  */
 void removeTempFiles(std::vector<MetadataSearcher::MP3Tag>* metadata);
+
+
+/**
+ * @brief remove the temporary files created during the metadata research
+ * 
+ * @param metadata pointer to the MP3Tag contaings the info of the song.
+ */
+void removeTempFiles(MetadataSearcher::MP3Tag* metadata);
+
 
 
 /**

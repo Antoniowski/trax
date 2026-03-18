@@ -15,6 +15,32 @@ void retrieveSongsNames(string dirPath, vector<string>*songsNamesVector)
     }
 }
 
+
+void retrieveSingleFileSongName(std::string songNameToFind, std::string* fileName){
+    for(auto &entry : filesystem::directory_iterator("./"))
+    {   
+        string currentPath = "./";
+        string singleFilePath = entry.path().string();
+        string str = songNameToFind;
+        string currentFileLookedName = "";
+        string currentFileLookedNamePrepared = "";
+        
+        int pos = singleFilePath.find(currentPath);
+        currentFileLookedName = singleFilePath.substr(pos + currentPath.size());
+        currentFileLookedNamePrepared = currentFileLookedName;
+        
+        prepareStringForComparison(&str);
+        prepareStringForComparison(&currentFileLookedNamePrepared);
+
+        if(currentFileLookedNamePrepared.find(str) != string::npos){
+            //found file
+            *fileName = currentFileLookedName;
+            break;
+        }
+    }
+}
+
+
 void prepareStringForComparison(std::string* str)
 {
     //lowercase + trim + normalize + remove spaces
