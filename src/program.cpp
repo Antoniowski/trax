@@ -246,6 +246,9 @@ void endProgram(flags_t flags){
 
 void setupSpinner(spinners::Spinner** spinner, Phases currentPhase){
     switch (currentPhase) {
+        case STARTING:
+            (*spinner)->setText("Starting");
+            break;
         case DOWNLOAD:
             (*spinner)->setText("Downloading Audio");
             break;

@@ -34,12 +34,14 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    if(!flags.debug){
+        spinner->start();
+        setupSpinner(&spinner, STARTING);
+    }
+
     if(!flags.onlyMetadataMode){
         // download phase
-        if(!flags.debug){
-            setupSpinner(&spinner, DOWNLOAD);
-            spinner->start();
-        }
+        if(!flags.debug) setupSpinner(&spinner, DOWNLOAD);
         if(!downloadAudio(data, &flags)){
             spinner->stop();
             delete spinner;

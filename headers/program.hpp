@@ -32,6 +32,7 @@ typedef struct args{
 } data_t;
 
 enum Phases{
+    STARTING,
     DOWNLOAD,
     METADATA_AND_COVER,
     TAG_EDIT,
