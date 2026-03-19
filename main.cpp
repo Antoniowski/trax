@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
         if(!flags.debug) setupSpinner(&spinner, METADATA_AND_COVER);
         
         if(flags.singleMode){
-            // retrieve album or song metadatas
+            // Single mode metadata retrieve
             string songFileName;
             MetadataSearcher::MP3Tag* singleResult = NULL;
             if(!searchMetadata(data, &flags, &songFileName, &singleResult)){
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
         else{
             vector<string> songTitles;
             std::vector<MetadataSearcher::MP3Tag>* result = NULL;
-            // retrieve album or song metadatas
+            // Retrieve album metadatas
             if(!searchMetadata(data, &flags,  &songTitles, &result)){
                 endProgram(flags);
                 spinner->stop();
