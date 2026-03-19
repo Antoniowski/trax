@@ -79,6 +79,8 @@ Output files can be converted to various formats using the <code>-f</code> flag.
 | -i, --iteration | -i [VALUE] specify which result to get from the metadata query (default is 0, the first one) |
 | -y | -y [YEAR] specify album release year |
 | -f | -f [FORMAT] used to specify the audio format of output files. Default is mp3. Other available formats are: aac, m4a, flac, alac, wav, opus, vorbis |
+| --no-image | skip image download and application |
+
 
 ## Workarounds
 Sometimes the program could fail because the metadata retrieved from MusicBrainz database are broken or incomplete. To retry a metadata research you can use the <code>-m</code> flag to skip the download phase.<br/> If errors still occur try also to add a specific year for the album using the <code>-y</code> flag and try to use the <code>-i</code> flag to force the program to retrieve a different result from the query results list.
