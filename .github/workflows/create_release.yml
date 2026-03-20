@@ -4,13 +4,24 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
 
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Install libcoverartcc
+      - name: Install Dependencies Pt.1
+        run: sudo apt-get install -y \
+          cmake \ 
+          libtag1-dev \
+          libmusicbrainz5-dev \
+          libcurl4-openssl-dev \
+          libneon27-dev \
+          libjansson-dev \
+          libxml2-dev
+
+      - name: Install Dependencies Pt.2
         run: |
           git clone https://github.com/metabrainz/libcoverart
           cd libcoverart
@@ -18,12 +29,6 @@ jobs:
           cmake --build build --parallel
           sudo cmake --install build
 
-      - name: Install Dependencies
-        run: sudo apt-get install -y \
-          cmake \ 
-          libtag1-dev \
-          libmusicbrainz5-dev \
-          libcurl4-openssl-dev 
 
       - name: Build
         run: |
