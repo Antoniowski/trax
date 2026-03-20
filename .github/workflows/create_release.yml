@@ -1,0 +1,52 @@
+name: CreateRelease
+
+on:
+  push:
+    tags:
+      - "v*"
+
+
+jobs:
+  build:
+    run-on: ubuntu-latest
+    steps:
+      - name: Install libcoverartcc
+        run: |
+          git clone https://github.com/metabrainz/libcoverartcc.git
+          cd libcoverartcc
+          cmake -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --parallel
+          sudo cmake --install build
+
+      - name: Install Dependencies
+        run: sudo apt-get install -y \
+          cmake \ 
+          libtag1-dev \
+          libmusicbrainz5-dev \
+          libcurl4-openssl-dev 
+
+      - name: Build
+        run: |
+          cmake -B build -DCMAKE-BUILD_TYPE=Release
+          cmake --build build --parallel
+
+  release:
+    needs: build
+    run-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare Artifacts
+        run: |
+          cp build/trax build/trax_linux_x86_64
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            build/trax_linux_x86_64
+            simple_install.sh
+          generate_release_notes: true
+          prerelease: false
