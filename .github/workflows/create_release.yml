@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    run-on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Install libcoverartcc
         run: |
@@ -32,7 +32,7 @@ jobs:
 
   release:
     needs: build
-    run-on: ubuntu-latest
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
