@@ -12,8 +12,8 @@ jobs:
     steps:
       - name: Install libcoverartcc
         run: |
-          git clone https://github.com/metabrainz/libcoverartcc.git
-          cd libcoverartcc
+          git clone https://github.com/metabrainz/libcoverart
+          cd libcoverart
           cmake -B build -DCMAKE_BUILD_TYPE=Release
           cmake --build build --parallel
           sudo cmake --install build
