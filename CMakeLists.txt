@@ -5,6 +5,8 @@ project(trax)
 set(CMAKE_CXX_CLANG_TIDY clang-tidy)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+find_library(MUSICBRAINZ5_LIB NAMES musicbrainz5cc musicbrainz5 REQUIRED)
+
 add_executable(trax 
     main.cpp 
     src/yt_dlp.cpp
@@ -24,7 +26,7 @@ target_include_directories(trax PRIVATE
 target_link_directories(trax PRIVATE /usr/local/lib)
 
 target_link_libraries(trax PRIVATE
-    musicbrainz5
+    ${MUSICBRAINZ5_LIB}
     tag
     coverartcc
 )
