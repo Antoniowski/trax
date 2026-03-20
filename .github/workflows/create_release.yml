@@ -12,12 +12,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Dependencies Pt.1
-        run: sudo apt-get install -y \
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
           cmake \ 
           libtag1-dev \
           libmusicbrainz5-dev \
           libcurl4-openssl-dev \
-          libneon27-dev \
+          libneon-dev \
           libjansson-dev \
           libxml2-dev
 
