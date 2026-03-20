@@ -22,25 +22,35 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+    // open manual
     if(flags.menu){
         printMenu();
         delete spinner;
         return 0;
     }
+    
+    // show version
+    if(flags.printVersion){
+        printVersion();
+        delete spinner;
+        return 0;
+    }
 
+    // handle wrong flags usage
     if(flags.onlyMetadataMode && flags.noMetadataMode){
         std::cout << "B R U H" << std::endl;
         delete spinner;
         return 1;
     }
 
+    // enable spinner if not in debug
     if(!flags.debug){
         spinner->start();
         setupSpinner(&spinner, STARTING);
     }
 
+    // download phase
     if(!flags.onlyMetadataMode){
-        // download phase
         if(!flags.debug) setupSpinner(&spinner, DOWNLOAD);
         if(!downloadAudio(data, &flags)){
             spinner->stop();
@@ -50,6 +60,7 @@ int main(int argc, char *argv[])
         }
     }
 
+    // metadata search phase
     if(!flags.noMetadataMode){
         if(!flags.debug) setupSpinner(&spinner, METADATA_AND_COVER);
         

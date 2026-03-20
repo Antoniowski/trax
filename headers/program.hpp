@@ -8,6 +8,7 @@
 
 typedef struct flags{
     bool menu = false;
+    bool printVersion = false;
     bool debug = false;
     bool singleMode = false;
     bool noMetadataMode = false;
@@ -147,5 +148,12 @@ void endProgram(flags_t flags);
  * @param currentPhase current program phase
  */
 void setupSpinner(spinners::Spinner** spinner, Phases currentPhase);
+
+
+/**
+ * @brief Print current program version
+ * 
+ */
+void printVersion();
 
 #endif

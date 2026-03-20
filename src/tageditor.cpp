@@ -5,7 +5,6 @@
 #include "taglib/id3v2tag.h"
 #include "taglib/attachedpictureframe.h"
 #include "taglib/mpegfile.h"
-#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>

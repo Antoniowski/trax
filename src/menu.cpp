@@ -7,6 +7,7 @@ void printMenu(){
     std::cout << "\tmp3 downloader based on yt-dlp and MusicBrainz database" << std::endl;
     std::cout << std::endl << "Options:" << std::endl;
     std::cout << "\t-h, --help\t\toutput trax manual" << std::endl;
+    std::cout << "\t-v\t\t\tprint current program version" << std::endl;
     std::cout << "\t-d\t\t\tenable debug mode to see the yt-dlp output stream " << std::endl;
     std::cout << "\t-s\t\t\t-s [SONG NAME] enable single song mode when the inserted url doesn't refer to a playlist" << std::endl;
     std::cout << "\t-x, --no-meta\t\tavoid metadata download and application" << std::endl;

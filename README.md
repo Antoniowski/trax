@@ -72,6 +72,7 @@ Output files can be converted to various formats using the <code>-f</code> flag.
 | ---- | ----------- |
 | -h, --help | output trax manual |
 | -d | enable debug mode to see the yt-dlp output stream |
+| -v | print current program version |
 | -s | -s [SONG NAME] use single song mode when the inserted url doesn't refer to a playlist |
 | -x, --no-meta | avoid metadata download and file manipulation; just download audio |
 | -k, --keep-image | keep the cover art image |

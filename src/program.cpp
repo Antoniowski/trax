@@ -1,4 +1,5 @@
 #include "program.hpp"
+#include "version.hpp"
 #include "yt_dlp.hpp"
 #include <cstring>
 #include <iostream>
@@ -13,8 +14,13 @@
 
 bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
      // Initial checks
-    if (argc == 2 && (strcmp(argv[1], "-h") || strcmp(argv[1], "--help"))){
+    if (argc == 2 && (std::string(argv[1]) == "-h") || std::string(argv[1]) ==  "--help"){
         flag_struct->menu = true;        
+        return true;
+    }
+
+    if (argc == 2 && (std::string(argv[1]) ==  "-v")){
+        flag_struct->printVersion = true;        
         return true;
     }
 
@@ -95,7 +101,8 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
                 flag_struct->pError = true;
                 return false;
             }
-        }else if(std::string(argv[i]) == "--no-image"){
+        }
+        else if(std::string(argv[i]) == "--no-image"){
             flag_struct->noImage = true;
         }
     }
@@ -110,7 +117,8 @@ bool downloadAudio(data_t data, flags_t* flags){
     int res = 0;
     if(flags->singleMode){
         res = downloadSong(data.url, flags->format, flags->debug);
-    }else{
+    }
+    else{
         res = downloadPlaylist(data.url, data.albumName, data.artistName, flags->format, flags->debug);
     }
 
@@ -118,7 +126,8 @@ bool downloadAudio(data_t data, flags_t* flags){
         std::cout << "[ERROR] There was a problem during audio download" << std::endl;
         flags->pError = true;
         return false;
-    }else{
+    }
+    else{
         flags->pAudioDownloaded = true;
         return true;
 
@@ -139,7 +148,8 @@ bool searchMetadata(data_t data, flags_t* flags, std::vector<std::string>* title
 
     if(flags->debug){
         *metadata = searcher->searchAlbum(data.albumName, data.artistName, data.year, flags->iteration);
-    }else{
+    }
+    else{
         OutputSuppressor suppress;
         *metadata = searcher->searchAlbum(data.albumName, data.artistName, data.year, flags->iteration);
     }
@@ -191,8 +201,7 @@ bool searchMetadata(data_t data, flags_t* flags, std::string* songFileName, Meta
     }
 
     // Download cover art
-    if(!flags->noImage)
-    {
+    if(!flags->noImage){
         try{
             searcher->downloadCoverArt((*metadata)->AlbumID);
             flags->pCoverDownloaded = true;
@@ -226,6 +235,7 @@ void removeTempFiles(std::vector<MetadataSearcher::MP3Tag>* metadata){
     std::filesystem::remove("./"+metadata->at(0).AlbumID+"-front.jpg");
 }
 
+
 void removeTempFiles(MetadataSearcher::MP3Tag* metadata){
     std::filesystem::remove("./"+metadata->AlbumID+"-front.jpg");
 }
@@ -243,6 +253,7 @@ void endProgram(flags_t flags){
     std::cout << "TAG EDIT: ";
     std::cout << (flags.pTagEdited ? "[OK]" : "[FAILED]") << std::endl;
 }
+
 
 void setupSpinner(spinners::Spinner** spinner, Phases currentPhase){
     switch (currentPhase) {
@@ -263,4 +274,9 @@ void setupSpinner(spinners::Spinner** spinner, Phases currentPhase){
     }
     (*spinner)->setInterval(100);
     (*spinner)->setSymbols("dots4");
+}
+
+
+void printVersion(){
+    std::cout << "Trax " + std::to_string(MAJOR_VERSION) + "." + std::to_string(MINOR_VERSION) + "." + std::to_string(REVISION_VERSION) << std::endl;
 }
