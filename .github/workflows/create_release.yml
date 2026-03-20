@@ -8,9 +8,13 @@ on:
 
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
+      - uses: actions/checkout@v4
+
       - name: Install Dependencies Pt.1
         run: |
           sudo apt-get update
@@ -24,19 +28,10 @@ jobs:
           cmake --build build --parallel
           sudo cmake --install build
 
-
-      - name: Build
+      - name: Build Trax
         run: |
-          cmake -B build -DCMAKE-BUILD_TYPE=Release
+          cmake -B build -DCMAKE_BUILD_TYPE=Release
           cmake --build build --parallel
-
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
 
       - name: Prepare Artifacts
         run: |
