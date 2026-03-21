@@ -59,61 +59,61 @@ jobs:
           path: build/trax
 
   build-windows:
-  runs-on: windows-latest
-  permissions:
-    contents: write
-  steps:
-    - uses: actions/checkout@v4
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
 
-    - name: Setup msys2
-      uses: msys2/setup-msys2@v2
-      with:
-        msystem: MINGW64
-        update: true
-        install: >-
-          mingw-w64-x86_64-taglib
-          mingw-w64-x86_64-curl
-          mingw-w64-x86_64-cmake
-          mingw-w64-x86_64-ninja
-          mingw-w64-x86_64-libxml2
-          mingw-w64-x86_64-neon
-          mingw-w64-x86_64-jansson
-          mingw-w64-x86_64-gcc
-          git
+      - name: Setup msys2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-taglib
+            mingw-w64-x86_64-curl
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-libxml2
+            mingw-w64-x86_64-neon
+            mingw-w64-x86_64-jansson
+            mingw-w64-x86_64-gcc
+            git
 
-    - name: Cache libmusicbrainz5
-      uses: actions/cache@v4
-      id: cache-mb
-      with:
-        path: C:/msys64/mingw64/lib/libmusicbrainz*
-        key: libmusicbrainz5-windows-${{ runner.os }}
+      - name: Cache libmusicbrainz5
+        uses: actions/cache@v4
+        id: cache-mb
+        with:
+          path: C:/msys64/mingw64/lib/libmusicbrainz*
+          key: libmusicbrainz5-windows-${{ runner.os }}
 
-    - name: Build libmusicbrainz5
-      if: steps.cache-mb.outputs.cache-hit != 'true'
-      shell: msys2 {0}
-      run: |
-        git clone https://github.com/metabrainz/libmusicbrainz
-        cd libmusicbrainz
-        cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-        cmake --build build
-        cmake --install build
+      - name: Build libmusicbrainz5
+        if: steps.cache-mb.outputs.cache-hit != 'true'
+        shell: msys2 {0}
+        run: |
+          git clone https://github.com/metabrainz/libmusicbrainz
+          cd libmusicbrainz
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build build
+          cmake --install build
 
-    - name: Cache libcoverart
-      uses: actions/cache@v4
-      id: cache-ca
-      with:
-        path: C:/msys64/mingw64/lib/libcoverart*
-        key: libcoverart-windows-${{ runner.os }}
+      - name: Cache libcoverart
+        uses: actions/cache@v4
+        id: cache-ca
+        with:
+          path: C:/msys64/mingw64/lib/libcoverart*
+          key: libcoverart-windows-${{ runner.os }}
 
-    - name: Build libcoverart
-      if: steps.cache-ca.outputs.cache-hit != 'true'
-      shell: msys2 {0}
-      run: |
-        git clone https://github.com/metabrainz/libcoverart
-        cd libcoverart
-        cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-        cmake --build build
-        cmake --install build
+      - name: Build libcoverart
+        if: steps.cache-ca.outputs.cache-hit != 'true'
+        shell: msys2 {0}
+        run: |
+          git clone https://github.com/metabrainz/libcoverart
+          cd libcoverart
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build build
+          cmake --install build
 
     - name: Configure
       shell: msys2 {0}
