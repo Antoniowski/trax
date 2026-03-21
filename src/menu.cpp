@@ -17,4 +17,5 @@ void printMenu(){
     std::cout << "\t-y\t\t\t'-y [YEAR]' used to specify the album release year" << std::endl;
     std::cout << "\t-f\t\t\t'-f [FORMAT]' used to specify the audio format of output files. Default is mp3. Other available formats are: aac, m4a, flac, alac, wav, opus, vorbis" << std::endl;
     std::cout << "\t--no-image\t\tskip image download and application" << std::endl;
+    std::cout << "\t-N\t\t\tenable complete naming for files" << std::endl;
 }

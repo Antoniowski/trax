@@ -86,7 +86,7 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
             MP3Tag track;
             track.AlbumID = firstAlbumId;
             track.Title = singleTrack->Recording()->Title();
-            if (track.Title.empty()) singleTrack->Title();
+            if (track.Title.empty()) track.Title = singleTrack->Title();
             track.Album = firstAlbum->Title();
             track.Year = firstAlbum->Date();
             track.TrackNumber = singleTrack->Number();

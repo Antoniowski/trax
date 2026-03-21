@@ -15,6 +15,7 @@ typedef struct flags{
     bool onlyMetadataMode = false;
     bool keepImage = false;
     bool noImage = false;
+    bool completeName = false;
     std::string format = "mp3";
     int iteration = 0;
     bool pAudioDownloaded = false;

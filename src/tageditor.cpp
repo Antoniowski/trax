@@ -1,5 +1,6 @@
 #include "tageditor.hpp"
 #include "MetadataSearcher.hpp"
+#include "program.hpp"
 #include "taglib/tag.h"
 #include "taglib/fileref.h"
 #include "taglib/id3v2tag.h"
@@ -13,7 +14,7 @@
 
 using namespace std;
 
-void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSearcher::MP3Tag>* metadatas, string artistName, bool noImage)
+void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSearcher::MP3Tag>* metadatas, string artistName, bool noImage, bool complexName)
 {
     for(int i = 0; i < songNames.size(); i++)
     {
@@ -51,7 +52,7 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
         }
         catch (exception e) 
         {
-            file.tag()->setTrack(i);
+            file.tag()->setTrack(i+1);
         }
         try 
         {
@@ -94,13 +95,13 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
 
         // rename file
         std::string ext = songNames[i].substr(songNames[i].find_last_of("."));
-        rename((songsDirPath + songNames[i]).c_str(), (songsDirPath + tag.Title + ext).c_str());
+        rename((songsDirPath + songNames[i]).c_str(), (songsDirPath + (complexName ? ((tag.TrackNumber.size() == 2 ? tag.TrackNumber : "0" + tag.TrackNumber) + " - " + artistName + " - " + tag.Title) : tag.Title) + ext).c_str());
     }
 }
 
 
 
-void editTag(std::string songName, MetadataSearcher::MP3Tag* metadata, std::string artistName, bool noImage){
+void editTag(std::string songName, MetadataSearcher::MP3Tag* metadata, std::string artistName, bool noImage, bool complexName){
     std::string currentPath = "./";
     TagLib::MPEG::File file((currentPath+songName).c_str());
         if(!file.isValid())
@@ -114,7 +115,7 @@ void editTag(std::string songName, MetadataSearcher::MP3Tag* metadata, std::stri
         }
         catch (exception e) 
         {
-            file.tag()->setTrack(0);
+            file.tag()->setTrack(1);
         }
         try 
         {
@@ -157,5 +158,5 @@ void editTag(std::string songName, MetadataSearcher::MP3Tag* metadata, std::stri
 
         // rename file
         std::string ext = songName.substr(songName.find_last_of("."));
-        rename((currentPath + songName).c_str(), (currentPath + metadata->Title + ext).c_str());
+        rename((currentPath + songName).c_str(), (currentPath + (complexName ? ((metadata->TrackNumber.size() == 2 ? metadata->TrackNumber : "0" + metadata->TrackNumber) + " - " + artistName + " - " + metadata->Title) : metadata->Title) + ext).c_str());
 }

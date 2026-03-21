@@ -81,6 +81,8 @@ Output files can be converted to various formats using the <code>-f</code> flag.
 | -y | -y [YEAR] specify album release year |
 | -f | -f [FORMAT] used to specify the audio format of output files. Default is mp3. Other available formats are: aac, m4a, flac, alac, wav, opus, vorbis |
 | --no-image | skip image download and application |
+| -N | enable complete naming for files |
+
 
 
 ## Workarounds

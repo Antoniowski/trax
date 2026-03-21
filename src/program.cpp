@@ -105,6 +105,9 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
         else if(std::string(argv[i]) == "--no-image"){
             flag_struct->noImage = true;
         }
+        else if(std::string(argv[i]) == "-N"){
+            flag_struct->completeName = true;
+        }
     }
     data->albumName = std::string(argv[1]);
     data->artistName = std::string(argv[2]);
@@ -220,13 +223,13 @@ bool searchMetadata(data_t data, flags_t* flags, std::string* songFileName, Meta
 
 
 void editTagsAndCover(data_t data, flags_t* flags, std::vector<std::string> titles, std::vector<MetadataSearcher::MP3Tag> *metadata){
-    editTags(titles, data.fullPath, metadata, data.artistName, flags->noImage);
+    editTags(titles, data.fullPath, metadata, data.artistName, flags->noImage, flags->completeName);
     flags->pTagEdited = true;
 }
 
 
 void editTagsAndCover(data_t data, flags_t* flags, std::string songFileName, MetadataSearcher::MP3Tag *metadata){
-    editTag(songFileName, metadata, data.artistName, flags->noImage);
+    editTag(songFileName, metadata, data.artistName, flags->noImage, flags->completeName);
     flags->pTagEdited = true;
 }
 
