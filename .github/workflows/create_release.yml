@@ -47,7 +47,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install deps
-        run: brew install cmake taglib libmusicbrainz5 libcurl
+        run: brew install cmake taglib libmusicbrainz libcurl
       - name: Configure
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
       - name: Build
@@ -70,7 +70,7 @@ jobs:
           update: true
           install: >-
             mingw-w64-x86_64-taglib
-            mingw-w64-x86_64-libmusicbrainz5
+            mingw-w64-x86_64-libmusicbrainz
             mingw-w64-x86_64-curl
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-ninja
