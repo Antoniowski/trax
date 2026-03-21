@@ -2,7 +2,12 @@ cmake_minimum_required(VERSION 3.10)
 
 project(trax)
 
-set(CMAKE_CXX_CLANG_TIDY clang-tidy)
+find_program(CLANG_TIDY_EXE NAMES clang-tidy)
+
+if(CLANG_TIDY_EXE)
+  set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE}")
+endif()
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_library(MUSICBRAINZ5_LIB NAMES musicbrainz5cc musicbrainz5 REQUIRED)
