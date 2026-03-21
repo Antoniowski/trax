@@ -114,20 +114,20 @@ jobs:
           cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
           cmake --build build
           cmake --install build
+          
+      - name: Configure
+        shell: msys2 {0}
+        run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 
-    - name: Configure
-      shell: msys2 {0}
-      run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        shell: msys2 {0}
+        run: cmake --build build
 
-    - name: Build
-      shell: msys2 {0}
-      run: cmake --build build
-
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: trax_windows
-        path: build/trax.exe
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trax_windows
+          path: build/trax.exe
 
   release:
     runs-on: ubuntu-latest
