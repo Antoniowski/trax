@@ -51,7 +51,7 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
         // track info
         tagV2->setTitle(TagLib::String((tag.Title.empty() || tag.Title == " ") ? string("song_" + to_string(i)) : tag.Title, TagLib::String::UTF8));
         tagV2->setAlbum(TagLib::String(tag.Album, TagLib::String::UTF8));
-        tagV2->setArtist(tag.Artist.empty() ? TagLib::String(artistName, TagLib::String::UTF8) : tag.Artist);
+        tagV2->setArtist(tag.Artist.empty() ? TagLib::String(artistName, TagLib::String::UTF8) : TagLib::String(tag.Artist, TagLib::String::UTF8));
 
         try{
             tagV2->setTrack(stoi(tag.TrackNumber));
@@ -79,6 +79,29 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
             cout << "[WARNING] Album artist error! Field skipped." << endl;
         }
 
+        // TSOP - Artist sort name
+        try{
+            tagV2->removeFrames("TSOP");
+            auto* tsop = new TagLib::ID3v2::TextIdentificationFrame("TSOP", TagLib::String::UTF16);
+            tsop->setText(TagLib::String(tag.ArtistSortName, TagLib::String::UTF8));
+            tagV2->addFrame(tsop);
+        }
+        catch(exception e){
+            cout << "[WARNING] TSOP frame skipped" << endl;
+        }
+        
+
+        // TSO2 - Album artist sort name  
+        try{
+            tagV2->removeFrames("TSO2");
+            auto* tso2 = new TagLib::ID3v2::TextIdentificationFrame("TSO2", TagLib::String::UTF16);
+            tso2->setText(TagLib::String(tag.ArtistSortName, TagLib::String::UTF8));
+            tagV2->addFrame(tso2);
+        }
+        catch(exception e){
+            cout << "[WARNING] TSO2 frame skipped." << endl;
+        }
+
         // edit image
         if(!noImage){
             try{
@@ -103,7 +126,7 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
 
         // rename file
         std::string ext = songNames[i].substr(songNames[i].find_last_of("."));
-        rename((songsDirPath + songNames[i]).c_str(), (songsDirPath + (complexName ? ((tag.TrackNumber.size() == 2 ? tag.TrackNumber : "0" + tag.TrackNumber) + " - " + artistName + " - " + tag.Title) : tag.Title) + ext).c_str());
+        rename((songsDirPath + songNames[i]).c_str(), (songsDirPath + (complexName ? ((tag.TrackNumber.size() == 2 ? tag.TrackNumber : "0" + tag.TrackNumber) + " - " + tag.ArtistSortName + " - " + tag.Title) : tag.Title) + ext).c_str());
     }
 }
 
@@ -119,7 +142,7 @@ void editTag(std::string songName, MetadataSearcher::MP3Tag* metadata, std::stri
 
     tagV2->setTitle(TagLib::String((metadata->Title.empty() || metadata->Title == " ") ? string("song") : metadata->Title, TagLib::String::UTF8));
     tagV2->setAlbum(TagLib::String(metadata->Album, TagLib::String::UTF8));
-    tagV2->setArtist(metadata->Artist.empty() ? TagLib::String(artistName, TagLib::String::UTF8) : metadata->Artist);
+    tagV2->setArtist(metadata->Artist.empty() ? TagLib::String(artistName, TagLib::String::UTF8) : TagLib::String(metadata->Artist, TagLib::String::UTF8));
     try {
         tagV2->setTrack(stoi(metadata->TrackNumber));
     }
@@ -145,6 +168,29 @@ void editTag(std::string songName, MetadataSearcher::MP3Tag* metadata, std::stri
     }
     catch(exception e){
         cout << "[WARNING] Album artist error! Field skipped." << endl;
+    }
+
+    // TSOP - Artist sort name
+    try{
+        tagV2->removeFrames("TSOP");
+        auto* tsop = new TagLib::ID3v2::TextIdentificationFrame("TSOP", TagLib::String::UTF16);
+        tsop->setText(TagLib::String(metadata->ArtistSortName, TagLib::String::UTF8));
+        tagV2->addFrame(tsop);
+    }
+    catch(exception e){
+        cout << "[WARNING] TSOP frame skipped" << endl;
+    }
+    
+
+    // TSO2 - Album artist sort name  
+    try{
+        tagV2->removeFrames("TSO2");
+        auto* tso2 = new TagLib::ID3v2::TextIdentificationFrame("TSO2", TagLib::String::UTF16);
+        tso2->setText(TagLib::String(metadata->ArtistSortName, TagLib::String::UTF8));
+        tagV2->addFrame(tso2);
+    }
+    catch(exception e){
+        cout << "[WARNING] TSO2 frame skipped." << endl;
     }
     
     // edit image
@@ -173,5 +219,5 @@ void editTag(std::string songName, MetadataSearcher::MP3Tag* metadata, std::stri
 
     // rename file
     std::string ext = songName.substr(songName.find_last_of("."));
-    rename((currentPath + songName).c_str(), (currentPath + (complexName ? ((metadata->TrackNumber.size() == 2 ? metadata->TrackNumber : "0" + metadata->TrackNumber) + " - " + artistName + " - " + metadata->Title) : metadata->Title) + ext).c_str());
+    rename((currentPath + songName).c_str(), (currentPath + (complexName ? ((metadata->TrackNumber.size() == 2 ? metadata->TrackNumber : "0" + metadata->TrackNumber) + " - " + metadata->ArtistSortName + " - " + metadata->Title) : metadata->Title) + ext).c_str());
 }

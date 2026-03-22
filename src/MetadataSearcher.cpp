@@ -60,16 +60,6 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
             return NULL;
     }
 
-    //Genres
-    CTagList* genresList = fullRelease.TagList();
-    string genresString = "";
-    if (genresList) {
-        for(int i = 0; i < genresList->NumItems(); i++){
-            if(!genresString.empty()) genresString += "/";
-            genresString += genresList->Item(i)->Name();
-        }
-    }
-
     // Songs
     int currentMedium = 0;
     while (currentMedium < firstAlbum->MediumList()->Count()) {
@@ -89,11 +79,10 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
             if (track.Title.empty()) track.Title = singleTrack->Title();
             track.Album = firstAlbum->Title();
             track.Year = firstAlbum->Date();
-            track.TrackNumber = singleTrack->Number();
-            track.Artist = readArtists(singleTrack->Recording()->ArtistCredit());
-            if(track.Artist.empty()) track.Artist = readArtists(singleTrack->ArtistCredit());
-            if(track.Artist.empty()) track.Artist = readArtists(firstAlbum->ArtistCredit());
-            track.Genre = genresString;
+            track.TrackNumber = std::to_string(singleTrack->Position());
+            track.Artist = readArtists(singleTrack->ArtistCredit());
+            track.ArtistSortName = readArtistsSortName(singleTrack->ArtistCredit());
+            track.Genre = "";
             result->push_back(track);
         }
         currentMedium++;
@@ -139,16 +128,6 @@ MetadataSearcher::MP3Tag* MetadataSearcher::searchSong(string songName, string a
             return NULL;
     }
 
-    //Genres
-    CTagList* genresList = fullRelease.TagList();
-    string genresString = "";
-    if (genresList) {
-        for(int i = 0; i < genresList->NumItems(); i++){
-            if(!genresString.empty()) genresString += "/";
-            genresString += genresList->Item(i)->Name();
-        }
-    }
-
     // Songs
     int currentMedium = 0;
     while (currentMedium < firstAlbum->MediumList()->Count()) {
@@ -173,12 +152,10 @@ MetadataSearcher::MP3Tag* MetadataSearcher::searchSong(string songName, string a
             if (track.Title.empty()) singleTrack->Title();
             track.Album = firstAlbum->Title();
             track.Year = firstAlbum->Date();
-            track.Artist = readArtists(singleTrack->Recording()->ArtistCredit());
-            if(track.Artist.empty()) track.Artist = readArtists(singleTrack->ArtistCredit());
-            if(track.Artist.empty()) track.Artist = readArtists(firstAlbum->ArtistCredit());
-            std::cout << "Artista: " << track.Artist << std::endl;
-            track.TrackNumber = singleTrack->Number();
-            track.Genre = genresString;
+            track.Artist = readArtists(singleTrack->ArtistCredit());
+            track.ArtistSortName = readArtistsSortName(singleTrack->ArtistCredit());
+            track.TrackNumber = std::to_string(singleTrack->Position());
+            track.Genre = "";
             *result = track;
             return result;
         }
@@ -212,7 +189,7 @@ void MetadataSearcher::setParams(string songName, string album, string artist, i
 
 void MetadataSearcher::setLookupParams()
 {
-    lookupParams["inc"] = "recordings artist-credits genres";
+    lookupParams["inc"] = "recordings artists artist-credits genres";
 }
 
 
@@ -226,16 +203,51 @@ void MetadataSearcher::resetParams()
 
 string MetadataSearcher::readArtists(CArtistCredit* ac){
     if (!ac || !ac->NameCreditList()) return "";
-    string result;
+    
     CNameCreditList* ncl = ac->NameCreditList();
-    for (int j = 0; j < ncl->Count(); j++) {
+    string result;
+    
+    for (int j = 0; j < ncl->NumItems(); j++) {
         CNameCredit* nc = ncl->Item(j);
         if (!nc || !nc->Artist()) continue;
-        if (!result.empty()) result += ", ";
-        result += nc->Artist()->Name();
+        
+        string name = nc->Artist()->Name();
+        if(name.empty()) name = nc->Artist()->SortName();
+        
+        result += name;
+        
+        // JoinPhrase contiene il separatore definito da MusicBrainz
+        // es. " & ", " feat. ", " vs. ", ecc.
+        string join = nc->JoinPhrase();
+        if(!join.empty()) result += join;
     }
     return result;
-};
+}
+
+
+string MetadataSearcher::readArtistsSortName(CArtistCredit* ac){
+    if (!ac || !ac->NameCreditList()) return "";
+    
+    CNameCreditList* ncl = ac->NameCreditList();
+    string result;
+    
+    for (int j = 0; j < ncl->NumItems(); j++) {
+        CNameCredit* nc = ncl->Item(j);
+        if (!nc || !nc->Artist()) continue;
+        
+        // Preferisci nome localizzato, fallback al nome ufficiale
+        string name = nc->Artist()->SortName();
+        if(name.empty()) name = nc->Artist()->Name();
+        
+        result += name;
+        
+        // JoinPhrase contiene il separatore definito da MusicBrainz
+        // es. " & ", " feat. ", " vs. ", ecc.
+        string join = nc->JoinPhrase();
+        if(!join.empty()) result += join;
+    }
+    return result;
+}
 
 void MetadataSearcher::downloadCoverArt(string albumID)
 {

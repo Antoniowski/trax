@@ -28,6 +28,7 @@ class MetadataSearcher{
         {
             std::string AlbumID;
             std::string Artist;
+            std::string ArtistSortName;
             std::string Title;
             std::string Album;
             std::string Year;
@@ -118,5 +119,14 @@ class MetadataSearcher{
          * @return std::string containing all the artist found in the CArtistCredit object
          */
         std::string readArtists(CArtistCredit* ac);
+
+/**
+         * @brief retrieve a single string containing all the artist sort name of the specified CArtistCredit object 
+         * 
+         * @param ac pointer containing the CArtistCredit that will be used to retrive the artist string
+         * @return std::string containing all the artist found in the CArtistCredit object
+         */
+        std::string readArtistsSortName(CArtistCredit* ac);
+
 };
 #endif
