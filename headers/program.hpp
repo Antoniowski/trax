@@ -16,6 +16,7 @@ typedef struct flags{
     bool keepImage = false;
     bool noImage = false;
     bool completeName = false;
+    bool addGenres = false;
     std::string format = "mp3";
     int iteration = 0;
     bool pAudioDownloaded = false;
@@ -31,6 +32,7 @@ typedef struct args{
     int year = 0;
     std::string url = "";
     std::string fullPath = "";
+    std::string genres = "";
 } data_t;
 
 enum Phases{

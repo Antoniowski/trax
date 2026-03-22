@@ -18,4 +18,5 @@ void printMenu(){
     std::cout << "\t-f\t\t\t'-f [FORMAT]' used to specify the audio format of output files. Default is mp3. Other available formats are: aac, m4a, flac, alac, wav, opus, vorbis" << std::endl;
     std::cout << "\t--no-image\t\tskip image download and application" << std::endl;
     std::cout << "\t-N\t\t\tenable complete naming for files" << std::endl;
+    std::cout << "\t-g\t\t\t-g [GENRES] . To add more genres use the \"/\" as separator (e.g. rock/pop)" << std::endl;
 }

@@ -2,8 +2,6 @@
 #include "MetadataSearcher.hpp"
 #include <exception>
 #include <taglib/textidentificationframe.h>
-#include "taglib/tag.h"
-#include "taglib/fileref.h"
 #include "taglib/id3v2tag.h"
 #include "taglib/attachedpictureframe.h"
 #include "taglib/mpegfile.h"
@@ -16,10 +14,8 @@
 
 using namespace std;
 
-void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSearcher::MP3Tag>* metadatas, string artistName, bool noImage, bool complexName)
-{
-    for(int i = 0; i < songNames.size(); i++)
-    {
+void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSearcher::MP3Tag>* metadatas, string artistName, std::string genres, bool noImage, bool complexName){
+    for(int i = 0; i < songNames.size(); i++){
         TagLib::MPEG::File file((songsDirPath+songNames[i]).c_str());
         if(!file.isValid()) continue;
         
@@ -28,15 +24,13 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
 
         MetadataSearcher::MP3Tag tag;
         bool songFound = false;
-        for(MetadataSearcher::MP3Tag t : *metadatas)
-        {
+        for(MetadataSearcher::MP3Tag t : *metadatas){
             string fileNameStr = songNames[i];
             string songNameStr = t.Title;
             prepareStringForComparison(&fileNameStr);
             prepareStringForComparison(&songNameStr);
 
-            if(fileNameStr.find(songNameStr) != string::npos)
-            {
+            if(fileNameStr.find(songNameStr) != string::npos){
                 // found!
                 songFound = true;
                 tag = t;
@@ -66,8 +60,8 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
             tagV2->setYear(0);
         }
 
-        tagV2->setGenre(TagLib::String(tag.Genre, TagLib::String::UTF8));
-
+        
+        tagV2->setGenre(TagLib::String(genres, TagLib::String::UTF8));
         try{
             // album artist 
             tagV2->removeFrames("TPE2");
@@ -95,7 +89,7 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
         try{
             tagV2->removeFrames("TSO2");
             auto* tso2 = new TagLib::ID3v2::TextIdentificationFrame("TSO2", TagLib::String::UTF16);
-            tso2->setText(TagLib::String(tag.ArtistSortName, TagLib::String::UTF8));
+            tso2->setText(TagLib::String(artistName, TagLib::String::UTF8));
             tagV2->addFrame(tso2);
         }
         catch(exception e){
@@ -132,7 +126,7 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
 
 
 
-void editTag(std::string songName, MetadataSearcher::MP3Tag* metadata, std::string artistName, bool noImage, bool complexName){
+void editTag(std::string songName, MetadataSearcher::MP3Tag* metadata, std::string artistName, std::string genres, bool noImage, bool complexName){
     std::string currentPath = "./";
     TagLib::MPEG::File file((currentPath+songName).c_str());
     if(!file.isValid()) return;
@@ -143,6 +137,7 @@ void editTag(std::string songName, MetadataSearcher::MP3Tag* metadata, std::stri
     tagV2->setTitle(TagLib::String((metadata->Title.empty() || metadata->Title == " ") ? string("song") : metadata->Title, TagLib::String::UTF8));
     tagV2->setAlbum(TagLib::String(metadata->Album, TagLib::String::UTF8));
     tagV2->setArtist(metadata->Artist.empty() ? TagLib::String(artistName, TagLib::String::UTF8) : TagLib::String(metadata->Artist, TagLib::String::UTF8));
+
     try {
         tagV2->setTrack(stoi(metadata->TrackNumber));
     }
@@ -156,7 +151,7 @@ void editTag(std::string songName, MetadataSearcher::MP3Tag* metadata, std::stri
         tagV2->setYear(0);
     }
 
-    tagV2->setGenre(TagLib::String(metadata->Genre, TagLib::String::UTF8));
+    tagV2->setGenre(TagLib::String(genres, TagLib::String::UTF8));
 
     try{
         // album artist 
@@ -186,7 +181,7 @@ void editTag(std::string songName, MetadataSearcher::MP3Tag* metadata, std::stri
     try{
         tagV2->removeFrames("TSO2");
         auto* tso2 = new TagLib::ID3v2::TextIdentificationFrame("TSO2", TagLib::String::UTF16);
-        tso2->setText(TagLib::String(metadata->ArtistSortName, TagLib::String::UTF8));
+        tso2->setText(TagLib::String(artistName, TagLib::String::UTF8));
         tagV2->addFrame(tso2);
     }
     catch(exception e){

@@ -81,8 +81,9 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
             track.Year = firstAlbum->Date();
             track.TrackNumber = std::to_string(singleTrack->Position());
             track.Artist = readArtists(singleTrack->ArtistCredit());
+            if(track.Artist.empty()) track.Artist = readArtists(singleTrack->Recording()->ArtistCredit());
             track.ArtistSortName = readArtistsSortName(singleTrack->ArtistCredit());
-            track.Genre = "";
+            if(track.ArtistSortName.empty()) track.ArtistSortName = readArtistsSortName(singleTrack->Recording()->ArtistCredit());
             result->push_back(track);
         }
         currentMedium++;
@@ -153,9 +154,10 @@ MetadataSearcher::MP3Tag* MetadataSearcher::searchSong(string songName, string a
             track.Album = firstAlbum->Title();
             track.Year = firstAlbum->Date();
             track.Artist = readArtists(singleTrack->ArtistCredit());
+            if(track.Artist.empty()) track.Artist = readArtists(singleTrack->Recording()->ArtistCredit());
             track.ArtistSortName = readArtistsSortName(singleTrack->ArtistCredit());
+            if(track.ArtistSortName.empty()) track.ArtistSortName = readArtistsSortName(singleTrack->Recording()->ArtistCredit());
             track.TrackNumber = std::to_string(singleTrack->Position());
-            track.Genre = "";
             *result = track;
             return result;
         }

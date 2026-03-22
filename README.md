@@ -82,6 +82,7 @@ Output files can be converted to various formats using the <code>-f</code> flag.
 | -f | -f [FORMAT] used to specify the audio format of output files. Default is mp3. Other available formats are: aac, m4a, flac, alac, wav, opus, vorbis |
 | --no-image | skip image download and application |
 | -N | enable complete naming for files |
+| -g | -g [GENRES] used to add geners to files. To add more genres use the "/" as separator (e.g. rock/pop) |
 
 
 
