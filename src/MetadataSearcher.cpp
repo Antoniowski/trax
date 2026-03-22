@@ -176,6 +176,7 @@ MetadataSearcher::MP3Tag* MetadataSearcher::searchSong(string songName, string a
             track.Artist = readArtists(singleTrack->Recording()->ArtistCredit());
             if(track.Artist.empty()) track.Artist = readArtists(singleTrack->ArtistCredit());
             if(track.Artist.empty()) track.Artist = readArtists(firstAlbum->ArtistCredit());
+            std::cout << "Artista: " << track.Artist << std::endl;
             track.TrackNumber = singleTrack->Number();
             track.Genre = genresString;
             *result = track;

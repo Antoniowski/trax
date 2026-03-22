@@ -10,6 +10,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <taglib/tfile.h>
 #include <taglib/tstring.h>
 #include "utils.hpp"
 
@@ -20,8 +21,11 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
     for(int i = 0; i < songNames.size(); i++)
     {
         TagLib::MPEG::File file((songsDirPath+songNames[i]).c_str());
-        if(!file.isValid())
-            continue;
+        if(!file.isValid()) continue;
+        
+        TagLib::ID3v2::Tag* tagV2 = file.ID3v2Tag(true);
+        if(!tagV2) return;
+
         MetadataSearcher::MP3Tag tag;
         bool songFound = false;
         for(MetadataSearcher::MP3Tag t : *metadatas)
@@ -41,34 +45,32 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
             else 
                 continue;
         }
-        if (!songFound)
-            continue;
+        
+        if (!songFound) continue;
 
         // track info
-        file.tag()->setTitle(TagLib::String((tag.Title.empty() || tag.Title == " ") ? string("song_" + to_string(i)) : tag.Title, TagLib::String::UTF8));
-        file.tag()->setAlbum(TagLib::String(tag.Album, TagLib::String::UTF8));
-        file.tag()->setArtist(tag.Artist.empty() ? TagLib::String(artistName, TagLib::String::UTF8) : tag.Artist);
+        tagV2->setTitle(TagLib::String((tag.Title.empty() || tag.Title == " ") ? string("song_" + to_string(i)) : tag.Title, TagLib::String::UTF8));
+        tagV2->setAlbum(TagLib::String(tag.Album, TagLib::String::UTF8));
+        tagV2->setArtist(tag.Artist.empty() ? TagLib::String(artistName, TagLib::String::UTF8) : tag.Artist);
 
         try{
-            file.tag()->setTrack(stoi(tag.TrackNumber));
+            tagV2->setTrack(stoi(tag.TrackNumber));
         }
         catch (exception e){
-            file.tag()->setTrack(i+1);
+            tagV2->setTrack(i+1);
         }
         try{
-            file.tag()->setYear(stoi((tag.Year).substr(0, 4)));
+            tagV2->setYear(stoi((tag.Year).substr(0, 4)));
         } 
         catch (exception e){
-            file.tag()->setYear(0);
+            tagV2->setYear(0);
         }
 
-        file.tag()->setGenre(TagLib::String(tag.Genre, TagLib::String::UTF8));
+        tagV2->setGenre(TagLib::String(tag.Genre, TagLib::String::UTF8));
 
         try{
             // album artist 
-            TagLib::ID3v2::Tag* tagV2 = file.ID3v2Tag(true);
             tagV2->removeFrames("TPE2");
-
             auto* identificationFrame = new TagLib::ID3v2::TextIdentificationFrame("TPE2", TagLib::String::UTF16);
             identificationFrame->setText(TagLib::String(artistName, TagLib::String::UTF8));
             tagV2->addFrame(identificationFrame);
@@ -83,7 +85,6 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
                 // image
                 ifstream imageFile(string("./" + tag.AlbumID + "-front.jpg"), ios::binary);
                 vector<char> imageData{istreambuf_iterator<char>(imageFile), istreambuf_iterator<char>{}};
-                TagLib::ID3v2::Tag* tagV2 = file.ID3v2Tag(true);
                 tagV2->removeFrames("APIC");
                 
                 auto* frame = new TagLib::ID3v2::AttachedPictureFrame();
@@ -93,8 +94,7 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
                 frame->setPicture(TagLib::ByteVector(imageData.data(), imageData.size()));
                 tagV2->addFrame(frame);
             }
-            catch(exception e )
-            {
+            catch(exception e ){
                 cout << "[WARNING] Cover art attachment skipped." << endl;
             }
         }
@@ -112,65 +112,66 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
 void editTag(std::string songName, MetadataSearcher::MP3Tag* metadata, std::string artistName, bool noImage, bool complexName){
     std::string currentPath = "./";
     TagLib::MPEG::File file((currentPath+songName).c_str());
-        if(!file.isValid())
-            return;
-        file.tag()->setTitle(TagLib::String((metadata->Title.empty() || metadata->Title == " ") ? string("song") : metadata->Title, TagLib::String::UTF8));
-        file.tag()->setAlbum(TagLib::String(metadata->Album, TagLib::String::UTF8));
-        file.tag()->setArtist(metadata->Artist.empty() ? TagLib::String(artistName, TagLib::String::UTF8) : metadata->Artist);
-        try {
-            file.tag()->setTrack(stoi(metadata->TrackNumber));
-        }
-        catch (exception e) {
-            file.tag()->setTrack(1);
-        }
-        try {
-            file.tag()->setYear(stoi((metadata->Year).substr(0, 4)));
-        } 
-        catch (exception e) {
-            file.tag()->setYear(0);
-        }
+    if(!file.isValid()) return;
 
-        file.tag()->setGenre(TagLib::String(metadata->Genre, TagLib::String::UTF8));
+    TagLib::ID3v2::Tag* tagV2 = file.ID3v2Tag(true);
+    if(!tagV2) return;
 
+    tagV2->setTitle(TagLib::String((metadata->Title.empty() || metadata->Title == " ") ? string("song") : metadata->Title, TagLib::String::UTF8));
+    tagV2->setAlbum(TagLib::String(metadata->Album, TagLib::String::UTF8));
+    tagV2->setArtist(metadata->Artist.empty() ? TagLib::String(artistName, TagLib::String::UTF8) : metadata->Artist);
+    try {
+        tagV2->setTrack(stoi(metadata->TrackNumber));
+    }
+    catch (exception e) {
+        tagV2->setTrack(1);
+    }
+    try {
+        tagV2->setYear(stoi((metadata->Year).substr(0, 4)));
+    } 
+    catch (exception e) {
+        tagV2->setYear(0);
+    }
+
+    tagV2->setGenre(TagLib::String(metadata->Genre, TagLib::String::UTF8));
+
+    try{
+        // album artist 
+        tagV2->removeFrames("TPE2");
+
+        auto* identificationFrame = new TagLib::ID3v2::TextIdentificationFrame("TPE2", TagLib::String::UTF16);
+        identificationFrame->setText(TagLib::String(artistName, TagLib::String::UTF8));
+        tagV2->addFrame(identificationFrame);
+    }
+    catch(exception e){
+        cout << "[WARNING] Album artist error! Field skipped." << endl;
+    }
+    
+    // edit image
+    if(!noImage){
         try{
-            // album artist 
-            TagLib::ID3v2::Tag* tagV2 = file.ID3v2Tag(true);
-            tagV2->removeFrames("TPE2");
+            ifstream imageFile(string("./" + metadata->AlbumID + "-front.jpg"), ios::binary);
+            vector<char> imageData{istreambuf_iterator<char>(imageFile), istreambuf_iterator<char>{}};
+            tagV2->removeFrames("APIC");
+    
+            // Create the picture frame
+            auto* frame = new TagLib::ID3v2::AttachedPictureFrame();
+            frame->setMimeType("image/jpeg");  // or "image/png"
+            frame->setType(TagLib::ID3v2::AttachedPictureFrame::FrontCover);
+            frame->setDescription("Front Cover");
+            frame->setPicture(TagLib::ByteVector(imageData.data(), imageData.size()));
+    
+            // Attach and save
+            tagV2->addFrame(frame);
+        }
+        catch(exception e ){
+            cout << "[WARNING] Cover art attachment skipped." << endl;
+        }
+    }
+    
+    file.save(TagLib::MPEG::File::AllTags);
 
-            auto* identificationFrame = new TagLib::ID3v2::TextIdentificationFrame("TPE2", TagLib::String::UTF16);
-            identificationFrame->setText(TagLib::String(artistName, TagLib::String::UTF8));
-            tagV2->addFrame(identificationFrame);
-        }
-        catch(exception e){
-            cout << "[WARNING] Album artist error! Field skipped." << endl;
-        }
-        
-        // edit image
-        if(!noImage){
-            try{
-                ifstream imageFile(string("./" + metadata->AlbumID + "-front.jpg"), ios::binary);
-                vector<char> imageData{istreambuf_iterator<char>(imageFile), istreambuf_iterator<char>{}};
-                TagLib::ID3v2::Tag* tagV2 = file.ID3v2Tag(true);
-                tagV2->removeFrames("APIC");
-        
-                // Create the picture frame
-                auto* frame = new TagLib::ID3v2::AttachedPictureFrame();
-                frame->setMimeType("image/jpeg");  // or "image/png"
-                frame->setType(TagLib::ID3v2::AttachedPictureFrame::FrontCover);
-                frame->setDescription("Front Cover");
-                frame->setPicture(TagLib::ByteVector(imageData.data(), imageData.size()));
-        
-                // Attach and save
-                tagV2->addFrame(frame);
-            }
-            catch(exception e ){
-                cout << "[WARNING] Cover art attachment skipped." << endl;
-            }
-        }
-        
-        file.save();
-
-        // rename file
-        std::string ext = songName.substr(songName.find_last_of("."));
-        rename((currentPath + songName).c_str(), (currentPath + (complexName ? ((metadata->TrackNumber.size() == 2 ? metadata->TrackNumber : "0" + metadata->TrackNumber) + " - " + artistName + " - " + metadata->Title) : metadata->Title) + ext).c_str());
+    // rename file
+    std::string ext = songName.substr(songName.find_last_of("."));
+    rename((currentPath + songName).c_str(), (currentPath + (complexName ? ((metadata->TrackNumber.size() == 2 ? metadata->TrackNumber : "0" + metadata->TrackNumber) + " - " + artistName + " - " + metadata->Title) : metadata->Title) + ext).c_str());
 }
