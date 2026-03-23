@@ -17,6 +17,7 @@ typedef struct flags{
     bool skipImageDownload = false;
     bool complexName = false;
     bool addGenres = false;
+    bool addRawGenres = false;
     std::string format = "mp3";
     int iteration = 0;
     bool pAudioDownloaded = false;

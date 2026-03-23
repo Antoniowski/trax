@@ -131,8 +131,17 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
         // add genres
         else if(std::string(argv[i]) == "-g"){
             flag_struct->addGenres = true;
+            flag_struct->addRawGenres = false;
             data->genres = std::string(argv[i+1]);
         }
+
+        // add raw genres
+        else if(std::string(argv[i]) == "-rg"){
+            flag_struct->addGenres = false;
+            flag_struct->addRawGenres = true;
+            data->genres = std::string(argv[i+1]);
+        }
+        
     }
     data->albumName = std::string(argv[1]);
     data->artistName = std::string(argv[2]);
@@ -248,13 +257,13 @@ bool searchMetadata(data_t data, flags_t* flags, std::string* songFileName, Meta
 
 
 void editTagsAndCover(data_t data, flags_t* flags, std::vector<std::string> titles, std::vector<MetadataSearcher::MP3Tag> *metadata){
-    editTags(titles, data.fullPath, metadata, data.artistName, data.genres, flags->skipImageDownload, flags->complexName);
+    editTags(titles, data.fullPath, metadata, data.artistName, data.genres, flags->addRawGenres, flags->skipImageDownload, flags->complexName);
     flags->pTagEdited = true;
 }
 
 
 void editTagsAndCover(data_t data, flags_t* flags, std::string songFileName, MetadataSearcher::MP3Tag *metadata){
-    editTag(songFileName, metadata, data.artistName, data.genres, flags->skipImageDownload, flags->complexName);
+    editTag(songFileName, metadata, data.artistName, data.genres, flags->addRawGenres, flags->skipImageDownload, flags->complexName);
     flags->pTagEdited = true;
 }
 

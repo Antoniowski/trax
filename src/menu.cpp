@@ -19,4 +19,6 @@ void printMenu(){
     std::cout << "\t--no-image\t\tskip image download and application" << std::endl;
     std::cout << "\t-N\t\t\tenable complete naming for files" << std::endl;
     std::cout << "\t-g\t\t\t-g [GENRES] used to add geners to files. To add more genres use the \"/\" as separator (e.g. rock/pop)" << std::endl;
+    std::cout << "\t-rg\t\t\t-rg [GENRES] used to add geners to files as a raw string." << std::endl;
+
 }

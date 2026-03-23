@@ -17,7 +17,7 @@
 
 using namespace std;
 
-void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSearcher::MP3Tag>* metadatas, string artistName, std::string genres, bool noImage, bool complexName){
+void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSearcher::MP3Tag>* metadatas, string artistName, std::string genres, bool rawGenres, bool noImage, bool complexName){
     for(int i = 0; i < songNames.size(); i++){
         TagLib::MPEG::File file((songsDirPath+songNames[i]).c_str());
         if(!file.isValid()) continue;
@@ -63,7 +63,7 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
         catch (exception e){
             tagV2->setTrack(i+1);
         }
-        
+
         try{
             tagV2->setYear(stoi((tag.Year).substr(0, 4)));
         } 
@@ -71,23 +71,29 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
             tagV2->setYear(0);
         }
 
-        try{
-            TagLib::StringList genreList;
-            stringstream genreStream(genres);
-            char delimiter = '/';
-            string token;
-            tagV2->removeFrames("TCON");
-            auto* tcon = new TagLib::ID3v2::TextIdentificationFrame("TCON", TagLib::String::UTF8);
-            while (getline(genreStream, token, delimiter)){
-                if(!token.empty())
-                    genreList.append(TagLib::String(token, TagLib::String::UTF8));
-            }
-            
-            tcon->setText(genreList);
-            tagV2->addFrame(tcon);
+        if(rawGenres)
+        {
+            tagV2->setGenre(TagLib::String(genres, TagLib::String::UTF8));
         }
-        catch(exception e){
-            cout << "[WARNING] Genre application error! Field skipped." << endl;
+        else{
+            try{
+                TagLib::StringList genreList;
+                stringstream genreStream(genres);
+                char delimiter = '/';
+                string token;
+                tagV2->removeFrames("TCON");
+                auto* tcon = new TagLib::ID3v2::TextIdentificationFrame("TCON", TagLib::String::UTF8);
+                while (getline(genreStream, token, delimiter)){
+                    if(!token.empty())
+                        genreList.append(TagLib::String(token, TagLib::String::UTF8));
+                }
+                
+                tcon->setText(genreList);
+                tagV2->addFrame(tcon);
+            }
+            catch(exception e){
+                cout << "[WARNING] Genre application error! Field skipped." << endl;
+            }
         }
 
         try{
@@ -154,7 +160,7 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
 
 
 
-void editTag(std::string songName, MetadataSearcher::MP3Tag* metadata, std::string artistName, std::string genres, bool noImage, bool complexName){
+void editTag(std::string songName, MetadataSearcher::MP3Tag* metadata, std::string artistName, std::string genres, bool rawGenres, bool noImage, bool complexName){
     std::string currentPath = "./";
     TagLib::MPEG::File file((currentPath+songName).c_str());
     if(!file.isValid()) return;
@@ -179,23 +185,28 @@ void editTag(std::string songName, MetadataSearcher::MP3Tag* metadata, std::stri
         tagV2->setYear(0);
     }
 
-    try{
-        TagLib::StringList genreList;
-        stringstream genreStream(genres);
-        char delimiter = '/';
-        string token;
-        tagV2->removeFrames("TCON");
-        auto* tcon = new TagLib::ID3v2::TextIdentificationFrame("TCON", TagLib::String::UTF8);
-        while (getline(genreStream, token, delimiter)){
-            if(!token.empty())
-                genreList.append(TagLib::String(token, TagLib::String::UTF8));
-        }
-        
-        tcon->setText(genreList);
-        tagV2->addFrame(tcon);
+    if(rawGenres){
+        tagV2->setGenre(TagLib::String(genres, TagLib::String::UTF8));
     }
-    catch(exception e){
-        cout << "[WARNING] Genre application error! Field skipped." << endl;
+    else {
+        try{
+            TagLib::StringList genreList;
+            stringstream genreStream(genres);
+            char delimiter = '/';
+            string token;
+            tagV2->removeFrames("TCON");
+            auto* tcon = new TagLib::ID3v2::TextIdentificationFrame("TCON", TagLib::String::UTF8);
+            while (getline(genreStream, token, delimiter)){
+                if(!token.empty())
+                    genreList.append(TagLib::String(token, TagLib::String::UTF8));
+            }
+            
+            tcon->setText(genreList);
+            tagV2->addFrame(tcon);
+        }
+        catch(exception e){
+            cout << "[WARNING] Genre application error! Field skipped." << endl;
+        }
     }
 
     try{
