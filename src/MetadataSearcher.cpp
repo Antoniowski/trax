@@ -50,7 +50,8 @@ vector<MetadataSearcher::MP3Tag>* MetadataSearcher::searchAlbum(string album, st
     else{
         firstAlbumId = albumList->Item(0)->ID();
     }
-
+    
+    std::cout << "Album ID: " << firstAlbumId << std::endl;
     CMetadata fullRelease = trackQuery.Query("release",firstAlbumId, "", lookupParams);
     CRelease* firstAlbum = fullRelease.Release();
 
@@ -120,6 +121,7 @@ MetadataSearcher::MP3Tag* MetadataSearcher::searchSong(string songName, string a
         firstAlbumId = albumList->Item(0)->ID();
     }
 
+    std::cout << "Album ID: " << firstAlbumId << std::endl;
     CMetadata fullRelease = trackQuery.Query("release",firstAlbumId, "", lookupParams);
     CRelease* firstAlbum = fullRelease.Release();
 

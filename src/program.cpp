@@ -15,7 +15,7 @@
 bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
      // Initial checks
     if (argc == 2 && (std::string(argv[1]) == "-h") || std::string(argv[1]) ==  "--help"){
-        flag_struct->menu = true;        
+        flag_struct->printMenu = true;        
         return true;
     }
 
@@ -33,10 +33,13 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
 
     //Parse arguments
     for(int i = 1; i < argc; i++){
+        // debug
         if(std::string(argv[i]) == "-d"){
             std::cout << "DEBUG ENABLED" << std::endl;
             flag_struct->debug = true;
         }
+
+        // single song mode
         else if(std::string(argv[i]) == "-s") {
             flag_struct->singleMode = true;
             data->songName = argv[i + 1];
@@ -46,12 +49,18 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
                 return false;
             }
         }
+
+        // skip metadata
         else if(std::string(argv[i]) == "-n" || std::string(argv[i]) == "--no-meta" || std::string(argv[1])=="" || std::string(argv[2])=="" || std::string(argv[1])==" " || std::string(argv[2])==" "){
-            flag_struct->noMetadataMode = true;
+            flag_struct->skipMetadata = true;
         }
+
+        // keep cover image
         else if(std::string(argv[i]) == "-k" || std::string(argv[i]) == "--keep-image"){
             flag_struct->keepImage = true;
         }
+
+        // iteration selection
         else if(std::string(argv[i]) == "-i" || std::string(argv[i]) == "--iteration"){
             try{
                 flag_struct->iteration = std::stoi(argv[i+1]);
@@ -67,9 +76,13 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
                 return false;
             }
         }
+
+        // skip download
         else if(std::string(argv[i]) == "-m" || std::string(argv[i]) == "--only-meta"){
-            flag_struct->onlyMetadataMode = true;
+            flag_struct->skipDownload = true;
         }
+
+        // specify year
         else if(std::string(argv[i]) == "-y"){
             try{
                 data->year = std::stoi(argv[i+1]);
@@ -85,6 +98,8 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
                 return false;
             }
         }
+
+        // format selection
         else if(std::string(argv[i]) == "-f"){
             flag_struct->format = std::string(argv[i+1]);
             
@@ -102,12 +117,18 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
                 return false;
             }
         }
+
+        // skip image download
         else if(std::string(argv[i]) == "--no-image"){
-            flag_struct->noImage = true;
+            flag_struct->skipImageDownload = true;
         }
+
+        // enable complex file name
         else if(std::string(argv[i]) == "-N"){
-            flag_struct->completeName = true;
+            flag_struct->complexName = true;
         }
+
+        // add genres
         else if(std::string(argv[i]) == "-g"){
             flag_struct->addGenres = true;
             data->genres = std::string(argv[i+1]);
@@ -170,7 +191,7 @@ bool searchMetadata(data_t data, flags_t* flags, std::vector<std::string>* title
     }
 
     // Download cover art
-    if(!flags->noImage)
+    if(!flags->skipImageDownload)
     {
         try{
             searcher->downloadCoverArt((*metadata)->at(0).AlbumID);
@@ -208,7 +229,7 @@ bool searchMetadata(data_t data, flags_t* flags, std::string* songFileName, Meta
     }
 
     // Download cover art
-    if(!flags->noImage){
+    if(!flags->skipImageDownload){
         try{
             searcher->downloadCoverArt((*metadata)->AlbumID);
             flags->pCoverDownloaded = true;
@@ -227,13 +248,13 @@ bool searchMetadata(data_t data, flags_t* flags, std::string* songFileName, Meta
 
 
 void editTagsAndCover(data_t data, flags_t* flags, std::vector<std::string> titles, std::vector<MetadataSearcher::MP3Tag> *metadata){
-    editTags(titles, data.fullPath, metadata, data.artistName, data.genres, flags->noImage, flags->completeName);
+    editTags(titles, data.fullPath, metadata, data.artistName, data.genres, flags->skipImageDownload, flags->complexName);
     flags->pTagEdited = true;
 }
 
 
 void editTagsAndCover(data_t data, flags_t* flags, std::string songFileName, MetadataSearcher::MP3Tag *metadata){
-    editTag(songFileName, metadata, data.artistName, data.genres, flags->noImage, flags->completeName);
+    editTag(songFileName, metadata, data.artistName, data.genres, flags->skipImageDownload, flags->complexName);
     flags->pTagEdited = true;
 }
 

@@ -29,11 +29,17 @@ void retrieveSingleFileSongName(std::string songNameToFind, std::string* fileNam
         currentFileLookedName = singleFilePath.substr(pos + currentPath.size());
         currentFileLookedNamePrepared = currentFileLookedName;
         
+        // first check without normalization
+        if(currentFileLookedName.find(str) != string::npos){
+            *fileName = currentFileLookedName;
+            break;
+        }
+        
+        // check with normalization
         prepareStringForComparison(&str);
         prepareStringForComparison(&currentFileLookedNamePrepared);
 
         if(currentFileLookedNamePrepared.find(str) != string::npos){
-            //found file
             *fileName = currentFileLookedName;
             break;
         }

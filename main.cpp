@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     }
 
     // open manual
-    if(flags.menu){
+    if(flags.printMenu){
         printMenu();
         delete spinner;
         return 0;
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     }
 
     // handle wrong flags usage
-    if(flags.onlyMetadataMode && flags.noMetadataMode){
+    if(flags.skipDownload && flags.skipMetadata){
         std::cout << "B R U H" << std::endl;
         delete spinner;
         return 1;
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     }
 
     // download phase
-    if(!flags.onlyMetadataMode){
+    if(!flags.skipDownload){
         if(!flags.debug) setupSpinner(&spinner, DOWNLOAD);
         if(!downloadAudio(data, &flags)){
             spinner->stop();
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
     }
 
     // metadata search phase
-    if(!flags.noMetadataMode){
+    if(!flags.skipMetadata){
         if(!flags.debug) setupSpinner(&spinner, METADATA_AND_COVER);
         
         if(flags.singleMode){

@@ -1,6 +1,8 @@
 #include "tageditor.hpp"
 #include "MetadataSearcher.hpp"
 #include <exception>
+#include <fstream>
+#include <sstream>
 #include <taglib/textidentificationframe.h>
 #include "taglib/id3v2tag.h"
 #include "taglib/attachedpictureframe.h"
@@ -10,6 +12,7 @@
 #include <string>
 #include <taglib/tfile.h>
 #include <taglib/tstring.h>
+#include <taglib/tstringlist.h>
 #include "utils.hpp"
 
 using namespace std;
@@ -27,17 +30,24 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
         for(MetadataSearcher::MP3Tag t : *metadatas){
             string fileNameStr = songNames[i];
             string songNameStr = t.Title;
+
+            // comparison without normalizzation. Useful for foreign titles
+            if(fileNameStr.find(songNameStr) != string::npos){
+                songFound = true;
+                tag = t;
+                break;
+            }
+            
+            // comparison with normalization
             prepareStringForComparison(&fileNameStr);
             prepareStringForComparison(&songNameStr);
 
-            if(fileNameStr.find(songNameStr) != string::npos){
+            if(!fileNameStr.empty() && !songNameStr.empty() && fileNameStr.find(songNameStr) != string::npos){
                 // found!
                 songFound = true;
                 tag = t;
                 break;
             }
-            else 
-                continue;
         }
         
         if (!songFound) continue;
@@ -53,6 +63,7 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
         catch (exception e){
             tagV2->setTrack(i+1);
         }
+        
         try{
             tagV2->setYear(stoi((tag.Year).substr(0, 4)));
         } 
@@ -60,8 +71,25 @@ void editTags(vector<string> songNames, string songsDirPath, vector<MetadataSear
             tagV2->setYear(0);
         }
 
-        
-        tagV2->setGenre(TagLib::String(genres, TagLib::String::UTF8));
+        try{
+            TagLib::StringList genreList;
+            stringstream genreStream(genres);
+            char delimiter = '/';
+            string token;
+            tagV2->removeFrames("TCON");
+            auto* tcon = new TagLib::ID3v2::TextIdentificationFrame("TCON", TagLib::String::UTF8);
+            while (getline(genreStream, token, delimiter)){
+                if(!token.empty())
+                    genreList.append(TagLib::String(token, TagLib::String::UTF8));
+            }
+            
+            tcon->setText(genreList);
+            tagV2->addFrame(tcon);
+        }
+        catch(exception e){
+            cout << "[WARNING] Genre application error! Field skipped." << endl;
+        }
+
         try{
             // album artist 
             tagV2->removeFrames("TPE2");
@@ -151,7 +179,24 @@ void editTag(std::string songName, MetadataSearcher::MP3Tag* metadata, std::stri
         tagV2->setYear(0);
     }
 
-    tagV2->setGenre(TagLib::String(genres, TagLib::String::UTF8));
+    try{
+        TagLib::StringList genreList;
+        stringstream genreStream(genres);
+        char delimiter = '/';
+        string token;
+        tagV2->removeFrames("TCON");
+        auto* tcon = new TagLib::ID3v2::TextIdentificationFrame("TCON", TagLib::String::UTF8);
+        while (getline(genreStream, token, delimiter)){
+            if(!token.empty())
+                genreList.append(TagLib::String(token, TagLib::String::UTF8));
+        }
+        
+        tcon->setText(genreList);
+        tagV2->addFrame(tcon);
+    }
+    catch(exception e){
+        cout << "[WARNING] Genre application error! Field skipped." << endl;
+    }
 
     try{
         // album artist 

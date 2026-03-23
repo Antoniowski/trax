@@ -7,15 +7,15 @@
 #include <vector>
 
 typedef struct flags{
-    bool menu = false;
+    bool printMenu = false;
     bool printVersion = false;
     bool debug = false;
     bool singleMode = false;
-    bool noMetadataMode = false;
-    bool onlyMetadataMode = false;
+    bool skipMetadata = false;
+    bool skipDownload = false;
     bool keepImage = false;
-    bool noImage = false;
-    bool completeName = false;
+    bool skipImageDownload = false;
+    bool complexName = false;
     bool addGenres = false;
     std::string format = "mp3";
     int iteration = 0;
