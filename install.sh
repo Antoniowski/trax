@@ -13,3 +13,5 @@ make || { echo "Error with make"; exit 1; }
 cd ..
 
 sudo install -m 0755 $SOURCE $INSTALL_DIR/$PROGRAM_NAME 
+
+echo "Installation Completed!"
