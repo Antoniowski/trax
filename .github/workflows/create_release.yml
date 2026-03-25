@@ -15,18 +15,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Dependencies Pt.1
+      - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake libtag1-dev libmusicbrainz5-dev libcurl4-openssl-dev libneon27-dev libjansson-dev libxml2-dev
-
-      - name: Install Dependencies Pt.2
-        run: |
-          git clone https://github.com/metabrainz/libcoverart
-          cd libcoverart
-          cmake -B build -DCMAKE_BUILD_TYPE=Release
-          cmake --build build --parallel
-          sudo cmake --install build
+          sudo apt-get install -y cmake make libtag1-dev libmusicbrainz5-dev libcurl4-openssl-dev libcoverart-dev
 
       - name: Build Trax
         run: |
@@ -42,6 +34,6 @@ jobs:
         with:
           files: |
             build/trax_linux_x86_64
-            simple_install.sh
+            install_runtime_dependencies.sh
           generate_release_notes: true
           prerelease: false

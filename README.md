@@ -24,20 +24,19 @@ An audio downloader based on [yt-dlp](https://github.com/yt-dlp/yt-dlp) with aut
 >
 <br/>
 
-## Installation
+## Installation - Linux
 
-### Linux
-To install Trax you can downloading an already compiled version from this GitHub repo or can use the <code>install.sh</code> script contained in the repo.
+To install Trax on Linux you can download an already compiled binary from this GitHub repo or can use the <code>install.sh</code> script contained in the source code.
 
-#### Using Install.sh
+### Using Install.sh
 >[!NOTE]
->This method works with Debian based distros, Fedora, Arch Linux and OpenSUSE. <br/>
->If your distro is not in the list you can still install the program by manually installing dependencies and then executing the <code>build.sh</code> and <code>simple_install.sh</code> scripts.
+>This method works with Debian/Ubuntu, Fedora/RHEL, Arch Linux, OpenSUSE and CentOS. <br/>
+>If your distro is not in the list you can still build the program by manually installing dependencies and executing the <code>build.sh</code> script.
 
 First, get a copy of the source code.
 You can either clone the repo or get it from the latest release using:
 ```
-curl -L https://github.com/Antoniowski/trax/archive/refs/tags/v0.4.4.tar.gz -o ./trax.tar.gz
+curl -L https://github.com/Antoniowski/trax/archive/refs/tags/v0.4.5.tar.gz -o ./trax.tar.gz
 tar -xzvf ./trax.tar.gz
 ```
 Then move in the root directory and execute the <code>install.sh</code> script:
@@ -46,21 +45,21 @@ Then move in the root directory and execute the <code>install.sh</code> script:
 ```
 This script will handle the dependencies download and installation, the program compilation using CMake and the actual installation of the program on your system.
 <br/><br/>
-#### Using A Compiled Version
+
+### Using a Compiled Version
 This is the easiest way to get Trax. Just download one of the [releases](https://github.com/Antoniowski/trax/releases) or get the latest one using the following command: <br/>
 ```
-curl -L https://github.com/Antoniowski/trax/releases/download/v0.4.4/trax_linux_x86_64 -o ./trax
+curl -L https://github.com/Antoniowski/trax/releases/download/v0.4.5/trax_linux_x86_64 -o ./trax
 ```
-When the download is finished, run the following command to install the program on your system:
+When the download is finished, move in the dir where the file was downloaded and run the following command to install the program on your system:
 ```
 sudo install -m 0755 ./trax /usr/bin/trax 
 ```
 
-or use the <code>simple_install.sh</code> script in the same folder where you put the executable. You can find the script as asset in each [release](https://github.com/Antoniowski/trax/releases).
 >[!IMPORTANT]
->You still need all the dependencies to run trax. You can install them using the <code>install_runtime_dependencies.sh</code> script. You can found it attached at each [release](https://github.com/Antoniowski/trax/releases) as asset
+>You still need all the dependencies to run trax. You can install them using the <code>install_runtime_dependencies.sh</code> script. You can found it attached at each [release](https://github.com/Antoniowski/trax/releases) as asset.
 
-### Windows and MacOS
+## Installation - Windows and MacOS
 Coming soon...
 <br/>
 <br/>

@@ -11,6 +11,8 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_library(MUSICBRAINZ5_LIB NAMES musicbrainz5cc musicbrainz5 REQUIRED)
+find_library(TAG_LIB NAMES tag REQUIRED)
+find_library(COVERART_LIB NAMES coverartcc coverart PATHS /usr/local/lib REQUIRED)
 
 add_executable(trax 
     main.cpp 
@@ -25,14 +27,12 @@ add_executable(trax
 target_include_directories(trax PRIVATE 
     ${PROJECT_SOURCE_DIR}/src/
     ${PROJECT_SOURCE_DIR}/headers/
-    ${MUSICBRAINZ_INCLUDE_DIRS}
 )
 
-target_link_directories(trax PRIVATE /usr/local/lib)
 
 target_link_libraries(trax PRIVATE
     ${MUSICBRAINZ5_LIB}
-    tag
-    coverartcc
+    ${TAG_LIB}
+    ${COVERART_LIB}
 )
 
