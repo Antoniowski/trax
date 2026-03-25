@@ -13,42 +13,65 @@ An audio downloader based on [yt-dlp](https://github.com/yt-dlp/yt-dlp) with aut
 
 ## Dependencies
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp)
-- [libmusicbrainz](https://musicbrainz.org/doc/libmusicbrainz) (only for manual compilation)
-- [libcoverart](https://musicbrainz.org/doc/libcoverart) (only for manual compilation)
+- [libmusicbrainz](https://musicbrainz.org/doc/libmusicbrainz) 
+- [libcoverart](https://musicbrainz.org/doc/libcoverart)
+- [TagLib](https://taglib.org/)
+- libmusicbrainz5-devel (needed for compilation)
+- libcoverart-devel (needded for compilation)
+- TagLib-devel (needed for compilation)
+
+>[!NOTE]
+>Libraries names may vary from distro to distro. Check libraries names using your package manager.
+>
+
+>[!TIP]
+>If you are using a Debian based distro like Ubuntu, download yt-dlp from the official GitHub repo to avoid compatibility problems
+>
 
 ## Installation
 
 ### Linux
-To "install" Trax you can compiling it using CMake, downloading an already compiled version from this GitHub page or simply using the <code>install.sh</code> script that will handle the compilation and installation.
+To "install" Trax you can compiling it using CMake, downloading an already compiled version from this GitHub repo or simply using the <code>install.sh</code> script that will handle the compilation and installation.
 
-#### CMake
-To install Trax using CMake just execute the following commands while in the program directory:
-
+#### Manual Compilation (CMake)
+First, get a copy of the source code.
+You can either clone the repo or get it from the latest release using:
 ```
-mkdir build
-cd build/
-cmake ..
-make
+curl -L https://github.com/Antoniowski/trax/archive/refs/tags/v0.4.4.tar.gz -o ./trax.tar.gz
+tar -xzvf ./trax.tar.gz
 ```
 
-Doing so all the CMake generated file will be created in the build folder, including the trax executable. <br/>
-Now to install it on your machine you just need to enter in the <code>build</code> dir and execute the following command:
+To manual compile Trax using CMake execute the following commands while in the program main directory:
+
+```
+cmake -B build
+cmake --build build
+```
+
+Doing so all CMake generated files will be created in the build folder, including the Trax executable. <br/>
+Now to install the program on your machine, enter in the <code>build</code> dir and execute the following command:
 ```
 sudo install -m 0755 ./trax /usr/bin/trax
 ```
 
-#### Install.sh
-After cloning the repo, you can install Trax by using the following command: <br/>
+#### Using Install.sh
+After obtaining a copy of the source code (see above), enter in the root folder and run the <code>install.sh</code> script: <br/>
 
 ```
-sudo ./install.sh
+./install.sh
 ```
 
-
-This will automatically do all steps explained in the 'CMake' guide.
+This will automatically handle the compilation and installation of the program.
 
 #### Use A Compiled Version
-This is the easiest way to "install" Trax. Just download one of the [releases](https://github.com/Antoniowski/trax/releases). If you want to use trax globally you can use the <code>simple_install.sh</code> provided with each release.
+This is the easiest way to get Trax. Just download one of the [releases](https://github.com/Antoniowski/trax/releases) or get the latest one using the following command: <br/>
+```
+curl -L https://github.com/Antoniowski/trax/releases/download/v0.4.4/trax_linux_x86_64 -o ./trax
+```
+When the download is finished, run the following command to install the program on your system:
+```
+sudo install -m 0755 ./trax /usr/bin/trax 
+```
 
 ### Windows and MacOS
 Coming soon...
