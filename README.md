@@ -24,9 +24,9 @@ An audio downloader based on [yt-dlp](https://github.com/yt-dlp/yt-dlp) with aut
 >
 <br/>
 
-## Installation - Linux
+## Installation
 
-To install Trax on Linux you can download an already compiled binary from this GitHub repo or can use the <code>install.sh</code> script contained in the source code.
+To install Trax you can download an already compiled binary from this GitHub repo or can use the <code>install.sh</code> script contained in the source code.
 
 ### Using Install.sh
 >[!NOTE]
@@ -58,10 +58,6 @@ sudo install -m 0755 ./trax /usr/bin/trax
 
 >[!IMPORTANT]
 >You still need all the dependencies to run trax. You can install them using the <code>install_runtime_dependencies.sh</code> script. You can found it attached at each [release](https://github.com/Antoniowski/trax/releases) as asset.
-
-## Installation - Windows and MacOS
-Coming soon...
-<br/>
 <br/>
 
 ## How To Use
