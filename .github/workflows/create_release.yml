@@ -58,7 +58,7 @@ jobs:
           build-args: |
             VERSION=${{ github.ref_name }}
           tags: |
-            ghcr.io/${{ github.repository_owner }}/trax:latest
-            ghcr.io/${{ github.repository_owner }}/trax:${{ github.ref_name }}
+            ghcr.io/${{ env.OWNER }}/trax:latest
+            ghcr.io/${{ env.OWNER }}/trax:${{ github.ref_name }}
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
