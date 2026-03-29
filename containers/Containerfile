@@ -1,0 +1,19 @@
+FROM ubuntu:noble
+
+RUN apt update
+
+# install dependencies
+RUN apt install -y libmusicbrainz5-2 libcoverart1 libtag1v5 ffmpeg curl
+
+RUN curl -L "https://github.com/yt-dlp/yt-dlp/releases/download/2026.03.17/yt-dlp_linux" \
+-o /tmp/yt-dlp && \
+install -m 0755 /tmp/yt-dlp /usr/local/bin/yt-dlp && \
+rm /tmp/yt-dlp
+
+RUN curl -L "https://github.com/Antoniowski/trax/releases/download/v0.4.5/trax_linux_x86_64" \
+-o /tmp/trax && \
+install -m 0755 /tmp/trax /usr/local/bin/trax && \
+rm /tmp/trax
+
+WORKDIR /home/trax/music
+ENTRYPOINT ["/usr/local/bin/trax"]
