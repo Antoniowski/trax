@@ -51,7 +51,7 @@ bool parseArguments(int argc, char **argv, flags_t *flag_struct, data_t* data) {
         }
 
         // skip metadata
-        else if(std::string(argv[i]) == "-n" || std::string(argv[i]) == "--no-meta" || std::string(argv[1])=="" || std::string(argv[2])=="" || std::string(argv[1])==" " || std::string(argv[2])==" "){
+        else if(std::string(argv[i]) == "-x" || std::string(argv[i]) == "--no-meta" || std::string(argv[1])=="" || std::string(argv[2])=="" || std::string(argv[1])==" " || std::string(argv[2])==" "){
             flag_struct->skipMetadata = true;
         }
 
