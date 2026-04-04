@@ -36,7 +36,7 @@ To install Trax you can download a compiled binary from this GitHub repo or can 
 First, get a copy of the source code.
 You can either clone the repo or get it from the latest release using:
 ```
-curl -L https://github.com/Antoniowski/trax/archive/refs/tags/v0.4.6.tar.gz -o ./trax.tar.gz
+curl -L https://github.com/Antoniowski/trax/archive/refs/tags/v0.4.7.tar.gz -o ./trax.tar.gz
 tar -xzvf ./trax.tar.gz
 ```
 Then move in the root directory and execute the <code>install.sh</code> script:
@@ -49,7 +49,7 @@ This script will handle the dependencies download and installation, the program 
 ### Using a Compiled Version
 This is the easiest way to get Trax. Just download one of the [releases](https://github.com/Antoniowski/trax/releases) or get the latest one using the following command: <br/>
 ```
-curl -L https://github.com/Antoniowski/trax/releases/download/v0.4.6/trax_linux_x86_64 -o ./trax
+curl -L https://github.com/Antoniowski/trax/releases/download/v0.4.7/trax_linux_x86_64 -o ./trax
 ```
 When the download is finished, move in the dir where the file was downloaded and run the following command to install the program on your system:
 ```
