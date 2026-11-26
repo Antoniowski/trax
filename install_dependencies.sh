@@ -5,7 +5,7 @@ sudo -v
 
 if command -v apt >/dev/null 2>&1; then
 	echo "Packages Manager: apt"
-	PKG_MAN=apt
+	PKG_MAN_CMD="apt install -y"
 	LIBMUSIC=libmusicbrainz5-2
 	LIBMUSIC_DEV=libmusicbrainz5-dev
 	COVERART=libcoverart1
@@ -15,7 +15,7 @@ if command -v apt >/dev/null 2>&1; then
 	FFMPEG=ffmpeg
 elif command -v dnf >/dev/null 2>&1; then
 	echo "Package Manager: dnf"
-	PKG_MAN=dnf
+	PKG_MAN_CMD="dnf install -y"
 	LIBMUSIC=libmusicbrainz5
 	LIBMUSIC_DEV=libmusicbrainz5-devel
 	COVERART=""
@@ -25,7 +25,7 @@ elif command -v dnf >/dev/null 2>&1; then
 	FFMPEG=ffmpeg-free
 elif command -v yum >/dev/null 2>&1; then
 	echo "Package Manager: yum"
-	PKG_MAN=yum
+	PKG_MAN_CMD="yum install -y"
 	LIBMUSIC=musicbrainz5
 	LIBMUSIC_DEV=musicbrainz5-devel
 	COVERART=libcoverart
@@ -35,7 +35,7 @@ elif command -v yum >/dev/null 2>&1; then
 	FFMPEG=ffmpeg
 elif command -v pacman >/dev/null 2>&1; then
 	echo "Package Manager: pacman"
-	PKG_MAN=pacman
+	PKG_MAN_CMD="pacman -Sy --needed --noconfirm"
 	LIBMUSIC=libmusicbrainz5
 	LIBMUSIC_DEV=libmusicbrainz5
 	COVERART=libcoverart
@@ -45,7 +45,7 @@ elif command -v pacman >/dev/null 2>&1; then
 	FFMPEG=ffmpeg
 elif command -v zypper >/dev/null 2>&1; then
 	echo "Package Manager: zypper"
-	PKG_MAN=zypper
+	PKG_MAN_CMD="zypper install -y"
 	LIBMUSIC=libmusicbrainz5
 	LIBMUSIC_DEV=libmusicbrainz-devel
 	COVERART=libcoverart
@@ -60,7 +60,7 @@ fi
 
 echo
 echo "Installing Dependencies:"
-sudo $PKG_MAN install -y $LIBMUSIC $LIBMUSIC_DEV $COVERART $COVERART_DEV $TAG $TAG_DEV $FFMPEG cmake make || { echo "Dependency Installation FAILED"; exit 1; }
+sudo $PKG_MAN_CMD $LIBMUSIC $LIBMUSIC_DEV $COVERART $COVERART_DEV $TAG $TAG_DEV $FFMPEG cmake make || { echo "Dependency Installation FAILED"; exit 1; }
 if [ -z "$COVERART" ]; then
     echo "NOTE: libcoverart is not available in the package repository. Please build it manually from source: https://github.com/metabrainz/libcoverart"
 fi
